@@ -5,11 +5,13 @@ import com.openclassrooms.safetyNet.model.Person;
 import java.util.List;
 
 public interface IPersonService {
-    List<Person> getPersons();
+    List<Person> getAll();
 
-    Person saveNewPerson(Person newPerson);
+    Person save(Person newPerson);
 
-    Person findByName(String wholeName);
+    Person findByName(String fullName);
 
-    void deletePerson(String wholeName);
+    void delete(String fullName);
+
+    Person update(Person updatedPerson);
 }
