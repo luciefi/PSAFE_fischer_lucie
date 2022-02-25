@@ -1,6 +1,7 @@
 package com.openclassrooms.safetyNet.service;
 
 import com.openclassrooms.safetyNet.dao.IPersonDAO;
+import com.openclassrooms.safetyNet.exceptions.InvalidFormattedFullNameException;
 import com.openclassrooms.safetyNet.exceptions.PersonAlreadyExistsException;
 import com.openclassrooms.safetyNet.exceptions.PersonNotFoundException;
 import com.openclassrooms.safetyNet.model.Person;
@@ -18,8 +19,12 @@ public class PersonService implements IPersonService {
 
     private static final Logger logger = LogManager.getLogger(PersonService.class);
 
-    @Autowired
     private IPersonDAO personDAO;
+
+    @Autowired
+    public PersonService(IPersonDAO personDAO) {
+        this.personDAO = personDAO;
+    }
 
     @Override
     public List<Person> getAll() {
@@ -30,7 +35,7 @@ public class PersonService implements IPersonService {
     @Override
     public Person save(Person newPerson) {
         logger.info("Adding person with name {}", newPerson.recuperateFormattedFullName());
-        Person currentPerson = personDAO.findByName(newPerson.recuperateFormattedFullName());
+        Person currentPerson = findByName(newPerson.recuperateFormattedFullName());
         if (currentPerson != null) {
             logger.error("Unable to add. A person with name {} already exist", newPerson.recuperateFormattedFullName());
             throw new PersonAlreadyExistsException();
@@ -40,13 +45,17 @@ public class PersonService implements IPersonService {
 
     @Override
     public Person findByName(String fullName) {
-        return personDAO.findByName(fullName);
+        String[] nameArray = fullName.split("_");
+        if(nameArray.length != 2){
+            throw new InvalidFormattedFullNameException();
+        }
+        return personDAO.findByName(nameArray);
     }
 
     @Override
     public Person update(Person updatedPerson) {
         logger.info("Updating person with name {}", updatedPerson.recuperateFormattedFullName());
-        Person currentPerson = personDAO.findByName(updatedPerson.recuperateFormattedFullName());
+        Person currentPerson = findByName(updatedPerson.recuperateFormattedFullName());
 
         if (currentPerson == null) {
             logger.error("Unable to update. Person with name {} not found.", updatedPerson.recuperateFormattedFullName());
@@ -64,12 +73,12 @@ public class PersonService implements IPersonService {
     @Override
     public void delete(String fullName) {
         logger.info("Deleting person with name {}", fullName);
-        Person currentPerson = personDAO.findByName(fullName);
+        Person currentPerson = findByName(fullName);
         if (currentPerson == null) {
             logger.error("Unable to delete. Person with name {} not found.", fullName);
             throw new PersonNotFoundException();
         }
-        personDAO.deletePerson(fullName);
+        personDAO.deletePerson(fullName.split("_"));
     }
 
 }

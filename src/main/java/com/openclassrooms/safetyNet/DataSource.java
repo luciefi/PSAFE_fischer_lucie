@@ -5,6 +5,7 @@ import com.openclassrooms.safetyNet.model.FireStation;
 import com.openclassrooms.safetyNet.model.MedicalRecord;
 import com.openclassrooms.safetyNet.model.Person;
 import lombok.Data;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnNotWebApplication;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -19,6 +20,10 @@ public class DataSource {
     private List<FireStation> firestations;
 
     @PostConstruct
+    private void initDataSourcePostConstruct() {
+        initDataSource();
+    }
+
     private void initDataSource() {
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -29,5 +34,10 @@ public class DataSource {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @ConditionalOnNotWebApplication()
+    public void initDataSourceBeforeTest() {
+        initDataSource();
     }
 }

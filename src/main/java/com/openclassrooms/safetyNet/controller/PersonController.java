@@ -15,8 +15,12 @@ import java.util.List;
 @RestController
 public class PersonController {
 
-    @Autowired
     private IPersonService personService;
+
+    @Autowired
+    public PersonController(IPersonService personService) {
+        this.personService = personService;
+    }
 
     @GetMapping("/persons")
     public ResponseEntity<?> getPersons() {
@@ -30,7 +34,6 @@ public class PersonController {
     @PostMapping("/persons")
     public ResponseEntity<?> addPerson(@Valid @RequestBody Person newPerson) {
         personService.save(newPerson);
-        //TODO retourner la vrai URI
         return ResponseEntity.created(URI.create("persons")).body(newPerson);
     }
 
@@ -42,8 +45,7 @@ public class PersonController {
 
     @DeleteMapping("/persons/{fullName}")
     public ResponseEntity<?> deletePerson(@PathVariable("fullName") final String fullName) {
-            personService.delete(fullName);
-            return ResponseEntity.noContent().build();
+        personService.delete(fullName);
+        return ResponseEntity.noContent().build();
     }
-
 }

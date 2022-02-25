@@ -1,7 +1,6 @@
 package com.openclassrooms.safetyNet.dao;
 
 import com.openclassrooms.safetyNet.DataSource;
-import com.openclassrooms.safetyNet.exceptions.InvalidFormattedFullNameException;
 import com.openclassrooms.safetyNet.model.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -12,8 +11,15 @@ import java.util.stream.Collectors;
 @Repository
 public class PersonDAO implements IPersonDAO {
 
+    private DataSource dataSource;
+
     @Autowired
-    DataSource dataSource;
+    public PersonDAO(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    @Autowired
+
 
     @Override
     public List<Person> getPersons() {
@@ -28,11 +34,7 @@ public class PersonDAO implements IPersonDAO {
     }
 
     @Override
-    public Person findByName(String fullName) {
-        String[] nameArray = fullName.split("_");
-        if(nameArray.length < 2){
-            throw new InvalidFormattedFullNameException();
-        }
+    public Person findByName(String[] nameArray) {
         List<Person> personList = dataSource.getPersons();
         List<Person> foundPersonList = personList.stream()
                 .filter(person -> person.getFirstName().equals(nameArray[0]) && person.getLastName().equals(nameArray[1]))
@@ -44,7 +46,7 @@ public class PersonDAO implements IPersonDAO {
     }
 
     @Override
-    public void deletePerson(String fullName) {
-        dataSource.getPersons().remove(findByName(fullName));
+    public void deletePerson(String[] nameArray) {
+        dataSource.getPersons().remove(findByName(nameArray));
     }
 }

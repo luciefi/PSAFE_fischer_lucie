@@ -9,7 +9,7 @@ public interface IPersonDAO {
 
     Person saveNewPerson(Person newPerson);
 
-    Person findByName(String fullName);
+    Person findByName(String[] nameArray);
 
-    void deletePerson(String fullName);
+    void deletePerson(String[] nameArray);
 }

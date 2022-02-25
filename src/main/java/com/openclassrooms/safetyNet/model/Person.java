@@ -3,7 +3,7 @@ package com.openclassrooms.safetyNet.model;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 @Data
 public class Person {
@@ -20,7 +20,7 @@ public class Person {
     @NotBlank(message = "City cannot be empty.")
     private String city;
 
-    @NotNull(message = "Zip cannot be null.")
+    @Positive(message = "Zip must be a positive number.")
     private int zip;
 
     @NotBlank(message = "Phone cannot be empty.")
