@@ -1,0 +1,47 @@
+package com.openclassrooms.safetyNet.dao;
+
+import com.openclassrooms.safetyNet.DataSource;
+import com.openclassrooms.safetyNet.model.FireStation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Repository
+public class FireStationDAO implements IFireStationDAO {
+
+    private final DataSource dataSource;
+
+    @Autowired
+    public FireStationDAO(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    @Override
+    public List<FireStation> findAll() {
+        return dataSource.getFirestations();
+    }
+
+    @Override
+    public FireStation save(FireStation newFireStation) {
+        List<FireStation> fireStationList = dataSource.getFirestations();
+        fireStationList.add(newFireStation);
+        return newFireStation;
+    }
+
+    @Override
+    public FireStation findById(String address) {
+        List<FireStation> fireStationList = dataSource.getFirestations();
+        List<FireStation> foundFireStationList = fireStationList.stream().filter(fireStation -> fireStation.getAddress().equals(address)).collect(Collectors.toList());
+        if (foundFireStationList.size() > 0) {
+            return foundFireStationList.get(0);
+        }
+        return null;
+    }
+
+    @Override
+    public void deleteById(String address) {
+        dataSource.getFirestations().remove(findById(address));
+    }
+}
