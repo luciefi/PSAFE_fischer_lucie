@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler({
-            PersonNotFoundException.class, PersonAlreadyExistsException.class, MethodArgumentNotValidException.class, InvalidFormattedFullNameException.class, Exception.class})
+            NotFoundException.class, AlreadyExistsException.class, MethodArgumentNotValidException.class, InvalidException.class, Exception.class})
     public final ResponseEntity<?> handleException(Exception ex) {
 
         if (ex instanceof NotFoundException) {
@@ -26,6 +26,7 @@ public class GlobalExceptionHandler {
         if (ex instanceof MethodArgumentNotValidException) {
             return handleMethodArgumentNotValidException((MethodArgumentNotValidException) ex);
         }
+
         if (ex instanceof InvalidException) {
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
         }

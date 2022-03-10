@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 public class PersonController {
 
-    private IPersonService personService;
+    private final IPersonService personService;
 
     @Autowired
     public PersonController(IPersonService personService) {
@@ -26,7 +26,7 @@ public class PersonController {
     public ResponseEntity<?> getPersons() {
         List<Person> persons = personService.getAll();
         if (persons.isEmpty()) {
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(persons, HttpStatus.OK);
     }
