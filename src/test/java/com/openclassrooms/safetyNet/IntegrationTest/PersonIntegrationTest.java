@@ -1,4 +1,4 @@
-package com.openclassrooms.safetyNet.IT;
+package com.openclassrooms.safetyNet.IntegrationTest;
 
 import com.openclassrooms.safetyNet.DataSource;
 import com.openclassrooms.safetyNet.model.Person;
@@ -14,8 +14,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.runners.model.MultipleFailureException.assertEmpty;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class PersonIT {
+class PersonIntegrationTest {
 
     @Autowired
     public MockMvc mockMvc;
@@ -41,7 +41,6 @@ class PersonIT {
         mockMvc.perform(get("/persons"))
                 .andExpect(status().isOk())
                 .andExpect((jsonPath("$[0].firstName", is("John"))));
-        Assertions.assertEquals(23, dataSource.getPersons().size());
     }
 
     @Test
@@ -90,9 +89,9 @@ class PersonIT {
     @Test
     void deletePersonTest() throws Exception {
         mockMvc.perform(delete("/persons/John_Boyd")).andExpect(status().isNoContent());
-        List john = dataSource.getPersons().stream()
+        List<Person> john = dataSource.getPersons().stream()
                 .filter(person -> person.getFirstName().equals("John") && person.getLastName().equals("Boyd"))
                 .collect(Collectors.toList());
-        assertEmpty(john);
+        assertThat(john).isEmpty();
     }
 }

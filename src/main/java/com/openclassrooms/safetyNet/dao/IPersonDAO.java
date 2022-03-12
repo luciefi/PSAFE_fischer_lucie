@@ -5,11 +5,11 @@ import com.openclassrooms.safetyNet.model.Person;
 import java.util.List;
 
 public interface IPersonDAO {
-    List<Person> getPersons();
+    List<Person> findAll();
 
-    Person saveNewPerson(Person newPerson);
+    Person save(Person newPerson);
 
-    Person findByName(String[] nameArray);
+    Person findById(String[] nameArray);
 
-    void deletePerson(String[] nameArray);
+    void deleteById(String[] nameArray);
 }

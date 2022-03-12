@@ -1,16 +1,11 @@
-package com.openclassrooms.safetyNet.IT.controller;
+package com.openclassrooms.safetyNet.IntegrationTest.controller;
 
-import com.openclassrooms.safetyNet.controller.PersonController;
-import com.openclassrooms.safetyNet.dao.PersonDAO;
 import com.openclassrooms.safetyNet.exceptions.InvalidFormattedFullNameException;
 import com.openclassrooms.safetyNet.exceptions.PersonAlreadyExistsException;
 import com.openclassrooms.safetyNet.exceptions.PersonNotFoundException;
 import com.openclassrooms.safetyNet.model.Person;
 import com.openclassrooms.safetyNet.service.PersonService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -36,14 +31,8 @@ class PersonControllerTest {
     @MockBean
     PersonService personService;
 
-    @MockBean
-    PersonDAO personDAO;
-
     @Autowired
     public MockMvc mockMvc;
-
-    @Autowired
-    PersonController personController;
 
     @Test
     void getPersonsTest() throws Exception {
@@ -149,6 +138,22 @@ class PersonControllerTest {
                                 "}"))
                 .andExpect(status().isConflict());
         verify(personService, Mockito.times(1)).update(any(Person.class));
+    }
+
+
+    @Test
+    void updateInvalidPersonTest() throws Exception {
+        mockMvc.perform(put("/persons").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\n" +
+                                "    \"firstName\": \"John\",\n" +
+                                "    \"lastName\": \"Boyd\",\n" +
+                                "    \"address\": \"\",\n" +
+                                "    \"city\": \"\",\n" +
+                                "    \"zip\": \"\",\n" +
+                                "    \"phone\": \"\",\n" +
+                                "    \"email\": \"\"\n" +
+                                "}"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
