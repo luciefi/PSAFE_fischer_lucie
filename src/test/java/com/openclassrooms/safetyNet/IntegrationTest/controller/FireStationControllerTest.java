@@ -60,7 +60,7 @@ class FireStationControllerTest {
     void addFireStationTest() throws Exception {
         when(fireStationService.save(any(FireStation.class))).thenReturn(new FireStation());
 
-        mockMvc.perform(post("/firestations/").contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/firestations").contentType(MediaType.APPLICATION_JSON)
                         .content("{\n" +
                                 "    \"address\": \"1 Culver St\",\n" +
                                 "    \"station\": \"1\"\n" +

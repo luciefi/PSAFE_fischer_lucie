@@ -37,6 +37,13 @@ class FireStationIntegrationTest {
     }
 
     @Test
+    void getFireStationMappingTest() throws Exception {
+        mockMvc.perform(get("/firestations"))
+                .andExpect(status().isOk())
+                .andExpect((jsonPath("$[0].address", is("1509 Culver St"))));
+    }
+
+    @Test
     void addFireStationMappingTest() throws Exception {
         mockMvc.perform(post("/firestations").contentType(MediaType.APPLICATION_JSON)
                         .content("{\n" +

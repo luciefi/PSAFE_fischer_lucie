@@ -1,7 +1,6 @@
 package com.openclassrooms.safetyNet.controller;
 
 import com.openclassrooms.safetyNet.model.FireStation;
-import com.openclassrooms.safetyNet.model.Person;
 import com.openclassrooms.safetyNet.service.IFireStationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,14 +38,14 @@ public class FireStationController {
     }
 
     @PutMapping("/firestations")
-    public ResponseEntity<?> updatePerson(@Valid @RequestBody FireStation newFireStation) {
+    public ResponseEntity<?> updateAddressStationMapping(@Valid @RequestBody FireStation newFireStation) {
         FireStation updatedFireStation = fireStationService.update(newFireStation);
         return ResponseEntity.ok(updatedFireStation);
     }
 
-    @DeleteMapping("/firestations/{mapping}")
-    public ResponseEntity<?> deletePerson(@PathVariable("mapping") final String mapping) {
-        fireStationService.delete(mapping);
+    @DeleteMapping("/firestations/{address}")
+    public ResponseEntity<?> deleteAddressStationMapping(@PathVariable("address") final String address) {
+        fireStationService.delete(address);
         return ResponseEntity.noContent().build();
     }
 }

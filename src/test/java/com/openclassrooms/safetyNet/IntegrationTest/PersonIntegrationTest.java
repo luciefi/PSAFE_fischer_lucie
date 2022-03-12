@@ -41,7 +41,6 @@ class PersonIntegrationTest {
         mockMvc.perform(get("/persons"))
                 .andExpect(status().isOk())
                 .andExpect((jsonPath("$[0].firstName", is("John"))));
-        Assertions.assertEquals(23, dataSource.getPersons().size());
     }
 
     @Test
