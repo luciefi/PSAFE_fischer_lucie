@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 public class FireStationController {
 
-    private IFireStationService fireStationService;
+    private final IFireStationService fireStationService;
 
     @Autowired
     public FireStationController(IFireStationService fireStationService) {
@@ -29,7 +29,6 @@ public class FireStationController {
         }
         return new ResponseEntity<>(fireStations, HttpStatus.OK);
     }
-
 
     @PostMapping("/firestations")
     public ResponseEntity<?> addAddressStationMapping(@Valid @RequestBody FireStation newFireStation) {

@@ -40,7 +40,6 @@ class MedicalRecordIntegrationTest {
         mockMvc.perform(get("/medicalRecord"))
                 .andExpect(status().isOk())
                 .andExpect((jsonPath("$[0].firstName", is("John"))));
-        Assertions.assertEquals(23, dataSource.getMedicalrecords().size());
     }
 
     @Test
