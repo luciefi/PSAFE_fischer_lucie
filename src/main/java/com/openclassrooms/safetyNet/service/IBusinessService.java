@@ -9,4 +9,6 @@ public interface IBusinessService {
     PersonListingForFireStation getPersonListingForFireStation(int stationNumber);
 
     List<Child> getChildren(String address);
+
+    List<String> getPhoneNumbers(int firestation);
 }

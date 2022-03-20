@@ -40,23 +40,14 @@ public class BusinessService implements IBusinessService {
 
         logger.info("Fetching every person for fire station {}", stationNumber);
 
-        List<String> addressesForStation = fireStationDAO.findAll()
-                .stream()
-                .filter(fireStation -> fireStation.getStation() == stationNumber)
-                .map(fireStation -> fireStation.getAddress())
-                .distinct()
-                .collect(Collectors.toList());
+        List<String> addressesForStation = getAddressesForStation(stationNumber);
 
         PersonListingForFireStation personListingForFireStation = new PersonListingForFireStation();
 
         AtomicInteger nbOfAdult = new AtomicInteger();
         AtomicInteger nbOfChildren = new AtomicInteger();
 
-        List<Person> personList = personDAO.findAll()
-                .stream()
-                .filter(person -> addressesForStation.contains(person.getAddress()))
-                .collect(Collectors.toList());
-
+        List<Person> personList = getPersonForAddresses(addressesForStation);
 
         for (Person person : personList) {
             personListingForFireStation.getPersonsListForFireStation().add(PersonConverter.convertToLightweight(person));
@@ -92,8 +83,35 @@ public class BusinessService implements IBusinessService {
         return children;
     }
 
+    @Override
+    public List<String> getPhoneNumbers(int stationNumber) {
+        List<String> addressesForStation = getAddressesForStation(stationNumber);
+        return personDAO.findAll()
+                .stream()
+                .filter(person -> addressesForStation.contains(person.getAddress()))
+                .map(person -> person.getPhone())
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
     private Child createChildren(Person person, int age, List<Person> householdList) {
         List<Person> filteredHousehold = householdList.stream().filter(p -> !(p.getFirstName().equals(person.getFirstName()) && p.getLastName().equals(person.getLastName()))).collect(Collectors.toList());
         return new Child(person.getFirstName(), person.getLastName(), age, filteredHousehold);
+    }
+
+    private List<String> getAddressesForStation(int stationNumber) {
+        return fireStationDAO.findAll()
+                .stream()
+                .filter(fireStation -> fireStation.getStation() == stationNumber)
+                .map(fireStation -> fireStation.getAddress())
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    private List<Person> getPersonForAddresses(List addresses) {
+        return personDAO.findAll()
+                .stream()
+                .filter(person -> addresses.contains(person.getAddress()))
+                .collect(Collectors.toList());
     }
 }

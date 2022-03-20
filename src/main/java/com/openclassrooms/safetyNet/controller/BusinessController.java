@@ -43,5 +43,16 @@ public class BusinessController {
         }
         return new ResponseEntity<>(children, HttpStatus.OK);
     }
+
+    @GetMapping("/phoneAlert")
+    public ResponseEntity<?> getPhoneNumbersForStation(
+            @RequestParam(value = "firestation") int firestation
+    ) {
+        List<String> phoneNumbers = businessService.getPhoneNumbers(firestation);
+        if (phoneNumbers.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(phoneNumbers, HttpStatus.OK);
+    }
 }
 
