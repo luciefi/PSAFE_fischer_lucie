@@ -1,5 +1,6 @@
 package com.openclassrooms.safetyNet.controller;
 
+import com.openclassrooms.safetyNet.model.Child;
 import com.openclassrooms.safetyNet.model.PersonListingForFireStation;
 import com.openclassrooms.safetyNet.service.IBusinessService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 public class BusinessController {
@@ -28,6 +31,17 @@ public class BusinessController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(personListingForFireStation, HttpStatus.OK);
+    }
+
+    @GetMapping("/childAlert")
+    public ResponseEntity<?> getChildrenForGivenAddress(
+            @RequestParam(value = "address") String address
+    ) {
+        List<Child> children = businessService.getChildren(address);
+        if (children.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(children, HttpStatus.OK);
     }
 }
 

@@ -3,6 +3,7 @@ package com.openclassrooms.safetyNet.service;
 import com.openclassrooms.safetyNet.dao.IFireStationDAO;
 import com.openclassrooms.safetyNet.dao.IMedicalRecordDAO;
 import com.openclassrooms.safetyNet.dao.IPersonDAO;
+import com.openclassrooms.safetyNet.model.Child;
 import com.openclassrooms.safetyNet.model.Person;
 import com.openclassrooms.safetyNet.model.PersonListingForFireStation;
 import com.openclassrooms.safetyNet.utils.PersonConverter;
@@ -12,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -69,5 +71,29 @@ public class BusinessService implements IBusinessService {
         personListingForFireStation.setNumberOfChildren(nbOfChildren.get());
 
         return personListingForFireStation;
+    }
+
+    @Override
+    public List<Child> getChildren(String address) {
+        List<Person> householdList = personDAO.findAll()
+                .stream()
+                .filter(person -> address.equals(person.getAddress()))
+                .collect(Collectors.toList());
+
+        List<Child> children = new ArrayList<>();
+
+        for (Person person : householdList) {
+            int age = PersonUtils.getPersonAge(person.getFirstName(), person.getLastName(), medicalRecordDAO.findAll());
+            if (age < 18) {
+                children.add(createChildren(person, age, householdList));
+            }
+        }
+
+        return children;
+    }
+
+    private Child createChildren(Person person, int age, List<Person> householdList) {
+        List<Person> filteredHousehold = householdList.stream().filter(p -> !(p.getFirstName().equals(person.getFirstName()) && p.getLastName().equals(person.getLastName()))).collect(Collectors.toList());
+        return new Child(person.getFirstName(), person.getLastName(), age, filteredHousehold);
     }
 }
