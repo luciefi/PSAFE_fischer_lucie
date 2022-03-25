@@ -51,14 +51,6 @@ class MedicalRecordControllerTest {
     }
 
     @Test
-    void getEmptyMedicalRecordTest() throws Exception {
-        when(medicalRecordService.getAll()).thenReturn(new ArrayList<>());
-        mockMvc.perform(get("/medicalRecord"))
-                .andExpect(status().isNoContent());
-        verify(medicalRecordService, Mockito.times(1)).getAll();
-    }
-
-    @Test
     void addMedicalRecordTest() throws Exception {
         when(medicalRecordService.save(any(MedicalRecord.class))).thenReturn(new MedicalRecord());
 

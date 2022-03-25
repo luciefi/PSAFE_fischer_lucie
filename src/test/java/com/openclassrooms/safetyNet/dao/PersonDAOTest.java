@@ -5,7 +5,6 @@ import com.openclassrooms.safetyNet.model.Person;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -32,7 +31,7 @@ public class PersonDAOTest {
 
     @Test
     void getPersonsTest() {
-        List persons = new ArrayList();
+        ArrayList<Person> persons = new ArrayList<>();
         persons.add(new Person());
         when(dataSource.getPersons()).thenReturn(persons);
 
@@ -103,5 +102,51 @@ public class PersonDAOTest {
         when(dataSource.getPersons()).thenReturn(persons);
         personDAO.deleteById(new String[]{"toto", "test"});
         assertEquals(0, persons.size());
+    }
+
+    @Test
+    public void getPersonForAddressesTest() {
+        // Arrange
+        List<Person> persons = new ArrayList<>();
+        Person person1 = new Person();
+        person1.setAddress("address 1");
+        persons.add(person1);
+        Person person2 = new Person();
+        person2.setAddress("address 2");
+        persons.add(person2);
+        Person person3 = new Person();
+        person3.setAddress("address 3");
+        persons.add(person3);
+        when(dataSource.getPersons()).thenReturn(persons);
+        List<String> addresses = new ArrayList<>();
+        addresses.add("address 1");
+        addresses.add("address 2");
+        // Act
+        List<Person> personsAtAddress = personDAO.findByAddresses(addresses);
+        // Assert
+        verify(dataSource, Mockito.times(1)).getPersons();
+        assertEquals(2, personsAtAddress.size());
+    }
+
+    @Test
+    public void findByAddressTest(){
+        // Arrange
+        List<Person> persons = new ArrayList<>();
+        Person person1 = new Person();
+        person1.setAddress("address 1");
+        persons.add(person1);
+        Person person2 = new Person();
+        person2.setAddress("address 2");
+        persons.add(person2);
+        Person person3 = new Person();
+        person3.setAddress("address 3");
+        persons.add(person3);
+        when(dataSource.getPersons()).thenReturn(persons);
+
+        // Act
+        List<Person> personsAtAddress = personDAO.findByAddress("address 1");
+        // Assert
+        verify(dataSource, Mockito.times(1)).getPersons();
+        assertEquals(1, personsAtAddress.size());
     }
 }

@@ -48,14 +48,6 @@ class PersonControllerTest {
     }
 
     @Test
-    void getEmptyPersonsTest() throws Exception {
-        when(personService.getAll()).thenReturn(new ArrayList<>());
-        mockMvc.perform(get("/persons"))
-                .andExpect(status().isNoContent());
-        verify(personService, Mockito.times(1)).getAll();
-    }
-
-    @Test
     void addPersonTest() throws Exception {
         when(personService.save(any(Person.class))).thenReturn(new Person());
 

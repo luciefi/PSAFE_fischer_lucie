@@ -2,6 +2,7 @@ package com.openclassrooms.safetyNet.dao;
 
 import com.openclassrooms.safetyNet.DataSource;
 import com.openclassrooms.safetyNet.model.FireStation;
+import com.openclassrooms.safetyNet.service.BusinessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -43,5 +44,14 @@ public class FireStationDAO implements IFireStationDAO {
     @Override
     public void deleteById(String address) {
         dataSource.getFirestations().remove(findById(address));
+    }
+
+    @Override
+    public List<String> getAddressesForStation(int stationNumber) {
+        return findAll()
+                .stream()
+                .filter(fireStation -> fireStation.getStation() == stationNumber)
+                .map(FireStation::getAddress)
+                .collect(Collectors.toList());
     }
 }

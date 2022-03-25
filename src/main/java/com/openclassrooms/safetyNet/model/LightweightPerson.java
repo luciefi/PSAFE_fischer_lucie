@@ -5,7 +5,6 @@ import lombok.Data;
 @Data
 public class LightweightPerson {
 
-
     public LightweightPerson(String firstName, String lastName, String address, String phone) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -20,8 +19,4 @@ public class LightweightPerson {
     private String address;
 
     private String phone;
-
-    public String recuperateFormattedFullName() {
-        return firstName + "_" + lastName;
-    }
 }

@@ -27,9 +27,6 @@ public class BusinessController {
             @RequestParam(value = "stationNumber") int stationNumber
     ) {
         PersonListingForFireStation personListingForFireStation = businessService.getPersonListingForFireStation(stationNumber);
-        if (personListingForFireStation.getPersonsListForFireStation().isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
         return new ResponseEntity<>(personListingForFireStation, HttpStatus.OK);
     }
 
@@ -38,9 +35,6 @@ public class BusinessController {
             @RequestParam(value = "address") String address
     ) {
         List<Child> children = businessService.getChildren(address);
-        if (children.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
         return new ResponseEntity<>(children, HttpStatus.OK);
     }
 
@@ -49,9 +43,6 @@ public class BusinessController {
             @RequestParam(value = "firestation") int firestation
     ) {
         List<String> phoneNumbers = businessService.getPhoneNumbers(firestation);
-        if (phoneNumbers.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
         return new ResponseEntity<>(phoneNumbers, HttpStatus.OK);
     }
 }

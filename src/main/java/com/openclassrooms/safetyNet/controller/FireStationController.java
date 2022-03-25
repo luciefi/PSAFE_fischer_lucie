@@ -24,9 +24,6 @@ public class FireStationController {
     @GetMapping("/firestations")
     public ResponseEntity<?> getFireStation() {
         List<FireStation> fireStations = fireStationService.getAll();
-        if (fireStations.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
         return new ResponseEntity<>(fireStations, HttpStatus.OK);
     }
 

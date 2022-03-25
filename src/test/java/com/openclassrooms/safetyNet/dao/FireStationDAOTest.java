@@ -80,4 +80,19 @@ public class FireStationDAOTest {
         fireStationDAO.deleteById("1 Culver St");
         assertEquals(0, fireStations.size());
     }
+
+    @Test
+    public void getAddressesForStationTest() {
+        // Arrange
+        List<FireStation> fireStations = new ArrayList<>();
+        fireStations.add(new FireStation("address 1", 1));
+        fireStations.add(new FireStation("address 2", 2));
+        fireStations.add(new FireStation("address 3", 2));
+        when(dataSource.getFirestations()).thenReturn(fireStations);
+        // Act
+        List<String> addresses = fireStationDAO.getAddressesForStation(2);
+        // Assert
+        verify(dataSource, Mockito.times(1)).getFirestations();
+        assertEquals(2, addresses.size());
+    }
 }
