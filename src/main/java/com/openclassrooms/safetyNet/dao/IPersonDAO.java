@@ -12,4 +12,8 @@ public interface IPersonDAO {
     Person findById(String[] nameArray);
 
     void deleteById(String[] nameArray);
+
+    List<Person> findByAddresses(List<String> addresses);
+
+    List<Person> findByAddress(String address);
 }

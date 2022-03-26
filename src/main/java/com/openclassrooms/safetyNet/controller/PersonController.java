@@ -25,9 +25,6 @@ public class PersonController {
     @GetMapping("/persons")
     public ResponseEntity<?> getPersons() {
         List<Person> persons = personService.getAll();
-        if (persons.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
         return new ResponseEntity<>(persons, HttpStatus.OK);
     }
 

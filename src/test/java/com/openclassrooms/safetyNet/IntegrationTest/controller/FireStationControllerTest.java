@@ -49,14 +49,6 @@ class FireStationControllerTest {
     }
 
     @Test
-    void getEmptyFireStationTest() throws Exception {
-        when(fireStationService.getAll()).thenReturn(new ArrayList<>());
-        mockMvc.perform(get("/firestations"))
-                .andExpect(status().isNoContent());
-        verify(fireStationService, Mockito.times(1)).getAll();
-    }
-
-    @Test
     void addFireStationTest() throws Exception {
         when(fireStationService.save(any(FireStation.class))).thenReturn(new FireStation());
 

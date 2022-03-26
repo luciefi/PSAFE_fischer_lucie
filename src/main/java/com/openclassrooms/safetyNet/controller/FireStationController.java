@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 public class FireStationController {
 
-    private IFireStationService fireStationService;
+    private final IFireStationService fireStationService;
 
     @Autowired
     public FireStationController(IFireStationService fireStationService) {
@@ -24,12 +24,8 @@ public class FireStationController {
     @GetMapping("/firestations")
     public ResponseEntity<?> getFireStation() {
         List<FireStation> fireStations = fireStationService.getAll();
-        if (fireStations.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
         return new ResponseEntity<>(fireStations, HttpStatus.OK);
     }
-
 
     @PostMapping("/firestations")
     public ResponseEntity<?> addAddressStationMapping(@Valid @RequestBody FireStation newFireStation) {

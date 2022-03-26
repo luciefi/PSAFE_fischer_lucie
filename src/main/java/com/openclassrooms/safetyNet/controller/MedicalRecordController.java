@@ -24,9 +24,6 @@ public class MedicalRecordController {
     @GetMapping("/medicalRecord")
     public ResponseEntity<?> getMedicalRecords() {
         List<MedicalRecord> medicalRecords = medicalRecordService.getAll();
-        if (medicalRecords.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
         return new ResponseEntity<>(medicalRecords, HttpStatus.OK);
     }
 

@@ -1,12 +1,23 @@
 package com.openclassrooms.safetyNet.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Person {
+
+    public Person(String firstName, String lastName, String address, String phone) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.address = address;
+        this.phone = phone;
+    }
 
     @NotBlank(message = "First name cannot be empty.")
     private String firstName;

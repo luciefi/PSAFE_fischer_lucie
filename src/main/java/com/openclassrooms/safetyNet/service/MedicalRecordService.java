@@ -32,7 +32,7 @@ public class MedicalRecordService implements IMedicalRecordService {
 
     @Override
     public MedicalRecord save(MedicalRecord newMedicalRecord) {
-        logger.info("Adding medicalRecord with name {}", newMedicalRecord.recuperateFormattedFullName());
+        logger.info("Adding medical record with name {}", newMedicalRecord.recuperateFormattedFullName());
         MedicalRecord currentMedicalRecord = findByName(newMedicalRecord.recuperateFormattedFullName());
         if (currentMedicalRecord != null) {
             logger.error("Unable to add. A medical record with name {} already exist", newMedicalRecord.recuperateFormattedFullName());
@@ -56,7 +56,7 @@ public class MedicalRecordService implements IMedicalRecordService {
         MedicalRecord currentMedicalRecord = findByName(updatedMedicalRecord.recuperateFormattedFullName());
 
         if (currentMedicalRecord == null) {
-            logger.error("Unable to update. MedicalRecord with name {} not found.", updatedMedicalRecord.recuperateFormattedFullName());
+            logger.error("Unable to update. Medical record with name {} not found.", updatedMedicalRecord.recuperateFormattedFullName());
             throw new MedicalRecordNotFoundException();
         }
 
