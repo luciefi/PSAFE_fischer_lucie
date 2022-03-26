@@ -2,11 +2,12 @@ package com.openclassrooms.safetyNet.dao;
 
 import com.openclassrooms.safetyNet.DataSource;
 import com.openclassrooms.safetyNet.model.FireStation;
-import com.openclassrooms.safetyNet.service.BusinessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
@@ -53,5 +54,14 @@ public class FireStationDAO implements IFireStationDAO {
                 .filter(fireStation -> fireStation.getStation() == stationNumber)
                 .map(FireStation::getAddress)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<Integer> getStationForAddress(String address) {
+        return findAll()
+                .stream()
+                .filter(fireStation -> Objects.equals(fireStation.getAddress(), address))
+                .map(FireStation::getStation)
+                .findFirst();
     }
 }

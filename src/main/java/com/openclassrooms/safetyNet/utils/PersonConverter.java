@@ -1,8 +1,6 @@
 package com.openclassrooms.safetyNet.utils;
 
-import com.openclassrooms.safetyNet.model.Child;
-import com.openclassrooms.safetyNet.model.LightweightPerson;
-import com.openclassrooms.safetyNet.model.Person;
+import com.openclassrooms.safetyNet.model.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,7 +12,16 @@ public class PersonConverter {
     }
 
     public static Child convertToChild(Person person, int age, List<Person> householdList) {
-        List<Person> filteredHousehold = householdList.stream().filter(p -> !(p.getFirstName().equals(person.getFirstName()) && p.getLastName().equals(person.getLastName()))).collect(Collectors.toList());
+        List<Person> filteredHousehold = householdList.stream().filter(p -> !(p.getFirstName().equals(person.getFirstName()) && person.getLastName().equals(p.getLastName()))).collect(Collectors.toList());
         return new Child(person.getFirstName(), person.getLastName(), age, filteredHousehold);
+    }
+
+    public static PersonWithMedicalRecord convertToPersonWithMedicalRecord(Person person, MedicalRecord medicalRecord) {
+        return new PersonWithMedicalRecord(person.getFirstName(),
+                person.getLastName(),
+                person.getPhone(),
+                MedicalRecordUtils.getPersonAge(medicalRecord),
+                medicalRecord.getMedications(), medicalRecord.getAllergies()
+        );
     }
 }
