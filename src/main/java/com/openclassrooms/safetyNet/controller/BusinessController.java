@@ -1,6 +1,7 @@
 package com.openclassrooms.safetyNet.controller;
 
 import com.openclassrooms.safetyNet.model.Child;
+import com.openclassrooms.safetyNet.model.PersonListingForAddress;
 import com.openclassrooms.safetyNet.model.PersonListingForFireStation;
 import com.openclassrooms.safetyNet.service.IBusinessService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,12 @@ public class BusinessController {
     ) {
         List<String> phoneNumbers = businessService.getPhoneNumbers(firestation);
         return new ResponseEntity<>(phoneNumbers, HttpStatus.OK);
+    }
+
+    @GetMapping("/fire")
+    public ResponseEntity<?> getPeopleAndStationForAddress(@RequestParam(value = "address")String address){
+        PersonListingForAddress personListingForAddress = businessService.getPersonListingForAddress(address);
+        return new ResponseEntity<>(personListingForAddress, HttpStatus.OK);
     }
 }
 

@@ -4,10 +4,7 @@ import com.openclassrooms.safetyNet.dao.IFireStationDAO;
 import com.openclassrooms.safetyNet.dao.IMedicalRecordDAO;
 import com.openclassrooms.safetyNet.dao.IPersonDAO;
 import com.openclassrooms.safetyNet.exceptions.MedicalRecordNotFoundException;
-import com.openclassrooms.safetyNet.model.Child;
-import com.openclassrooms.safetyNet.model.MedicalRecord;
-import com.openclassrooms.safetyNet.model.Person;
-import com.openclassrooms.safetyNet.model.PersonListingForFireStation;
+import com.openclassrooms.safetyNet.model.*;
 import com.openclassrooms.safetyNet.utils.PersonConverter;
 import com.openclassrooms.safetyNet.utils.MedicalRecordUtils;
 import org.apache.logging.log4j.LogManager;
@@ -92,5 +89,10 @@ public class BusinessService implements IBusinessService {
                 .map(Person::getPhone)
                 .distinct()
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public PersonListingForAddress getPersonListingForAddress(String address) {
+        return null;
     }
 }

@@ -1,6 +1,7 @@
 package com.openclassrooms.safetyNet.service;
 
 import com.openclassrooms.safetyNet.model.Child;
+import com.openclassrooms.safetyNet.model.PersonListingForAddress;
 import com.openclassrooms.safetyNet.model.PersonListingForFireStation;
 
 import java.util.List;
@@ -11,4 +12,6 @@ public interface IBusinessService {
     List<Child> getChildren(String address);
 
     List<String> getPhoneNumbers(int firestation);
+
+    PersonListingForAddress getPersonListingForAddress(String address);
 }
