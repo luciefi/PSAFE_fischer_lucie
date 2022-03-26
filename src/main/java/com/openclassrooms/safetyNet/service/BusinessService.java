@@ -3,6 +3,7 @@ package com.openclassrooms.safetyNet.service;
 import com.openclassrooms.safetyNet.dao.IFireStationDAO;
 import com.openclassrooms.safetyNet.dao.IMedicalRecordDAO;
 import com.openclassrooms.safetyNet.dao.IPersonDAO;
+import com.openclassrooms.safetyNet.exceptions.FireStationNotFoundException;
 import com.openclassrooms.safetyNet.exceptions.MedicalRecordNotFoundException;
 import com.openclassrooms.safetyNet.model.*;
 import com.openclassrooms.safetyNet.utils.PersonConverter;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -64,15 +66,14 @@ public class BusinessService implements IBusinessService {
 
     @Override
     public List<Child> getChildren(String address) {
+        logger.info("Fetching every child for address {}", address);
+
         List<Person> householdList = personDAO.findByAddress(address);
 
         List<Child> children = new ArrayList<>();
 
         for (Person person : householdList) {
-            MedicalRecord medicalRecord = medicalRecordDAO.findById(new String[]{person.getFirstName(), person.getLastName()});
-            if (medicalRecord == null) {
-                throw new MedicalRecordNotFoundException();
-            }
+            MedicalRecord medicalRecord = medicalRecordDAO.findByIdOrThrow(new String[]{person.getFirstName(), person.getLastName()});
             int age = MedicalRecordUtils.getPersonAge(medicalRecord);
             if (MedicalRecordUtils.isAChild(age)) {
                 children.add(PersonConverter.convertToChild(person, age, householdList));
@@ -83,6 +84,8 @@ public class BusinessService implements IBusinessService {
 
     @Override
     public List<String> getPhoneNumbers(int stationNumber) {
+        logger.info("Fetching phone numbers for fire station {}", stationNumber);
+
         List<String> addressesForStation = fireStationDAO.getAddressesForStation(stationNumber);
         return personDAO.findByAddresses(addressesForStation)
                 .stream()
@@ -93,6 +96,24 @@ public class BusinessService implements IBusinessService {
 
     @Override
     public PersonListingForAddress getPersonListingForAddress(String address) {
-        return null;
+        logger.info("Fetching every person and fire station number for address {}", address);
+
+        List<PersonWithMedicalRecord> personWithMedicalRecordList = personDAO.findByAddress(address)
+                .stream()
+                .map(person -> {
+                    MedicalRecord medicalRecord = medicalRecordDAO.findByIdOrThrow(new String[]{person.getFirstName(), person.getLastName()});
+                    return PersonConverter.convertToPersonWithMedicalRecord(person, medicalRecord);
+                })
+                .collect(Collectors.toList());
+
+        Optional<Integer> stationNumber = fireStationDAO.getStationForAddress(address);
+        if (!(stationNumber.isPresent())) {
+            throw new FireStationNotFoundException();
+        }
+
+        PersonListingForAddress personListingForAddress = new PersonListingForAddress();
+        personListingForAddress.setFireStation(stationNumber.get());
+        personListingForAddress.setPersonsListForAddress(personWithMedicalRecordList);
+        return personListingForAddress;
     }
 }

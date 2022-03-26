@@ -1,6 +1,7 @@
 package com.openclassrooms.safetyNet.dao;
 
 import com.openclassrooms.safetyNet.DataSource;
+import com.openclassrooms.safetyNet.exceptions.MedicalRecordNotFoundException;
 import com.openclassrooms.safetyNet.model.MedicalRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -45,5 +46,14 @@ public class MedicalRecordDAO implements IMedicalRecordDAO {
     @Override
     public void deleteById(String[] nameArray) {
         dataSource.getMedicalrecords().remove(findById(nameArray));
+    }
+
+    @Override
+    public MedicalRecord findByIdOrThrow(String[] nameArray) {
+        MedicalRecord medicalRecord = findById(nameArray);
+        if (medicalRecord == null) {
+            throw new MedicalRecordNotFoundException();
+        }
+        return medicalRecord;
     }
 }

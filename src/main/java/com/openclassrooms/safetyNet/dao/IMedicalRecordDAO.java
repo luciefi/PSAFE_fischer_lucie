@@ -12,4 +12,6 @@ public interface IMedicalRecordDAO {
     MedicalRecord findById(String[] nameArray);
 
     void deleteById(String[] nameArray);
+
+    MedicalRecord findByIdOrThrow(String[] strings);
 }
