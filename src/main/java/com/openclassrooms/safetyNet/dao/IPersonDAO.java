@@ -16,4 +16,6 @@ public interface IPersonDAO {
     List<Person> findByAddresses(List<String> addresses);
 
     List<Person> findByAddress(String address);
+
+    List<Person> findByCity(String city);
 }

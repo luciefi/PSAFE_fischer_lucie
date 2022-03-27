@@ -116,4 +116,9 @@ public class BusinessService implements IBusinessService {
         personListingForAddress.setPersonsListForAddress(personWithMedicalRecordList);
         return personListingForAddress;
     }
+
+    @Override
+    public List<String> getEmails(String city) {
+        return personDAO.findByCity(city).stream().map(Person::getEmail).distinct().sorted().collect(Collectors.toList());
+    }
 }
