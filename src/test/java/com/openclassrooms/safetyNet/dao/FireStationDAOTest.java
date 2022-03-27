@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
@@ -94,5 +95,21 @@ public class FireStationDAOTest {
         // Assert
         verify(dataSource, Mockito.times(1)).getFirestations();
         assertEquals(2, addresses.size());
+    }
+
+    @Test
+    public void getStationForAddressTest(){
+        // Arrange
+        List<FireStation> fireStations = new ArrayList<>();
+        fireStations.add(new FireStation("address 1", 1));
+        fireStations.add(new FireStation("address 2", 2));
+        fireStations.add(new FireStation("address 3", 2));
+        when(dataSource.getFirestations()).thenReturn(fireStations);
+        // Act
+        Optional<Integer> station = fireStationDAO.getStationForAddress("address 2");
+        // Assert
+        verify(dataSource, Mockito.times(1)).getFirestations();
+        assertTrue(station.isPresent());
+        assertEquals(2, station.get());
     }
 }

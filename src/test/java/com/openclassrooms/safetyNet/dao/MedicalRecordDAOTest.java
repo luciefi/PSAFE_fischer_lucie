@@ -1,6 +1,7 @@
 package com.openclassrooms.safetyNet.dao;
 
 import com.openclassrooms.safetyNet.DataSource;
+import com.openclassrooms.safetyNet.exceptions.MedicalRecordNotFoundException;
 import com.openclassrooms.safetyNet.model.MedicalRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -57,7 +58,7 @@ public class MedicalRecordDAOTest {
         totoTest.setLastName("test");
         medicalRecords.add(totoTest);
         when(dataSource.getMedicalrecords()).thenReturn(medicalRecords);
-        assertNotNull(medicalRecordDAO.findById(new String[]{"toto", "test"}));
+        assertNotNull(medicalRecordDAO.findByIdOrThrow(new String[]{"toto", "test"}));
         verify(dataSource, Mockito.times(1)).getMedicalrecords();
     }
 
@@ -89,6 +90,15 @@ public class MedicalRecordDAOTest {
         medicalRecords.add(totoTest);
         when(dataSource.getMedicalrecords()).thenReturn(medicalRecords);
         assertNull(medicalRecordDAO.findById(new String[]{"toto", "test"}));
+        verify(dataSource, Mockito.times(1)).getMedicalrecords();
+    }
+
+    @Test
+    void findUnknownMedicalRecordByNameAndThrowTest() {
+        when(dataSource.getMedicalrecords()).thenReturn(new ArrayList<>());
+        assertThrows(MedicalRecordNotFoundException.class,
+                () -> medicalRecordDAO.findByIdOrThrow(new String[]{
+                "toto", "test"}));
         verify(dataSource, Mockito.times(1)).getMedicalrecords();
     }
 
