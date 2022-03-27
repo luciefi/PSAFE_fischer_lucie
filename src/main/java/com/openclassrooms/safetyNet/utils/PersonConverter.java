@@ -21,7 +21,8 @@ public class PersonConverter {
                 person.getLastName(),
                 person.getPhone(),
                 MedicalRecordUtils.getPersonAge(medicalRecord),
-                medicalRecord.getMedications(), medicalRecord.getAllergies()
+                medicalRecord.getMedications(),
+                medicalRecord.getAllergies()
         );
     }
 }

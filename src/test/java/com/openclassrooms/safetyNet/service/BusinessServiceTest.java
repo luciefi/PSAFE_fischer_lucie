@@ -3,6 +3,7 @@ package com.openclassrooms.safetyNet.service;
 import com.openclassrooms.safetyNet.dao.IFireStationDAO;
 import com.openclassrooms.safetyNet.dao.IMedicalRecordDAO;
 import com.openclassrooms.safetyNet.dao.IPersonDAO;
+import com.openclassrooms.safetyNet.exceptions.FireStationNotFoundException;
 import com.openclassrooms.safetyNet.exceptions.MedicalRecordNotFoundException;
 import com.openclassrooms.safetyNet.model.*;
 import org.junit.jupiter.api.Assertions;
@@ -18,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
@@ -100,36 +102,16 @@ public class BusinessServiceTest {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         Date adultBirthDate = formatter.parse(date_string);
         adultMedicalRecord.setBirthdate(adultBirthDate);
-        when(medicalRecordDAO.findById(any(String[].class))).thenReturn(childMedicalRecord).thenReturn(adultMedicalRecord);
+        when(medicalRecordDAO.findByIdOrThrow(any(String[].class))).thenReturn(childMedicalRecord).thenReturn(adultMedicalRecord);
 
         // Act
         List<Child> children = businessService.getChildren("address 1");
 
         // Assert
         verify(personDAO, Mockito.times(1)).findByAddress(anyString());
-        verify(medicalRecordDAO, Mockito.times(3)).findById(any(String[].class));
+        verify(medicalRecordDAO, Mockito.times(3)).findByIdOrThrow(any(String[].class));
         Assertions.assertEquals(1, children.size());
         Assertions.assertEquals(2, children.get(0).getHouseholdMembers().size());
-    }
-
-    @Test
-    public void getChildrenMedicalRecordNotFoundTest() {
-        // Arrange
-        List<Person> personList = new ArrayList<>();
-        Person person = new Person();
-        person.setFirstName("Toto");
-        person.setLastName("Test");
-        personList.add(person);
-        when(personDAO.findByAddress(anyString())).thenReturn(personList);
-
-        when(medicalRecordDAO.findById(any(String[].class))).thenReturn(null);
-
-        // Act - Assert
-        assertThrows(MedicalRecordNotFoundException.class, () -> businessService.getChildren("my address"));
-
-        // Assert
-        verify(personDAO, Mockito.times(1)).findByAddress(anyString());
-        verify(medicalRecordDAO, Mockito.times(1)).findById(any(String[].class));
     }
 
     @Test
@@ -153,5 +135,45 @@ public class BusinessServiceTest {
         verify(fireStationDAO, Mockito.times(1)).getAddressesForStation(anyInt());
         verify(personDAO, Mockito.times(1)).findByAddresses(any(List.class));
         Assertions.assertEquals(2, phoneNumbers.size());
+    }
+
+    @Test
+    public void getPersonListingForAddressTest() {
+        // Arrange
+        when(fireStationDAO.getStationForAddress(anyString())).thenReturn(Optional.of(2));
+
+        List<Person> personList = new ArrayList<>();
+        personList.add((new Person("a", "A", "", "")));
+        personList.add((new Person("b", "B", "", "")));
+        personList.add((new Person("c", "C", "", "")));
+        when(personDAO.findByAddress(anyString())).thenReturn(personList);
+
+        MedicalRecord medicalRecord = new MedicalRecord("", "", new Date(), new ArrayList<>(), new ArrayList<>());
+        when(medicalRecordDAO.findByIdOrThrow(any(String[].class))).thenReturn(medicalRecord);
+
+        // Act
+        PersonListingForAddress personListingForAddress = businessService.getPersonListingForAddress("my address");
+
+        // Assert
+        verify(fireStationDAO, Mockito.times(1)).getStationForAddress(anyString());
+        verify(personDAO, Mockito.times(1)).findByAddress(anyString());
+        verify(medicalRecordDAO, Mockito.times(3)).findByIdOrThrow(any(String[].class));
+        Assertions.assertEquals(2, personListingForAddress.getFireStation());
+        Assertions.assertEquals(3, personListingForAddress.getPersonsListForAddress().size());
+    }
+
+    @Test
+    public void getPersonListingForAddressFireStationNotFoundTest() {
+        // Arrange
+        when(fireStationDAO.getStationForAddress(anyString())).thenReturn(Optional.empty());
+        when(personDAO.findByAddress(anyString())).thenReturn(new ArrayList<>());
+
+        // Act - Assert
+        assertThrows(FireStationNotFoundException.class, () -> businessService.getPersonListingForAddress("my address"));
+
+        // Assert
+        verify(fireStationDAO, Mockito.times(1)).getStationForAddress(anyString());
+        verify(personDAO, Mockito.times(1)).findByAddress(anyString());
+        verify(medicalRecordDAO, Mockito.times(0)).findByIdOrThrow(any(String[].class));
     }
 }
