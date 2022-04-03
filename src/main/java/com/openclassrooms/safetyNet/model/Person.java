@@ -40,7 +40,4 @@ public class Person {
     @NotBlank(message = "Email cannot be empty.")
     private String email;
 
-    public String recuperateFormattedFullName(){
-        return firstName + "_" + lastName;
-    }
 }

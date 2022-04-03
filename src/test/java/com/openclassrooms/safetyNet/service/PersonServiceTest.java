@@ -14,6 +14,7 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -39,68 +40,68 @@ public class PersonServiceTest {
 
     @Test
     public void saveAlreadyExistingPersonTest() {
-        when(personDAO.findById(any(String[].class))).thenReturn(new Person());
+        when(personDAO.findById(anyString(), anyString())).thenReturn(new Person());
         assertThrows(PersonAlreadyExistsException.class, () -> personService.save(new Person()));
         verify(personDAO, Mockito.times(0)).save(any(Person.class));
-        verify(personDAO, Mockito.times(1)).findById(any(String[].class));
+        verify(personDAO, Mockito.times(1)).findById(anyString(), anyString());
     }
 
     @Test
     public void saveNewPersonTest() {
         when(personDAO.save(any(Person.class))).thenReturn(new Person());
-        when(personDAO.findById(any(String[].class))).thenReturn(null);
+        when(personDAO.findById(anyString(), anyString())).thenReturn(null);
         personService.save(new Person());
-        verify(personDAO, Mockito.times(1)).findById(any(String[].class));
+        verify(personDAO, Mockito.times(1)).findById(anyString(), anyString());
         verify(personDAO, Mockito.times(1)).save(any(Person.class));
     }
 
     @Test
     public void findKnownPersonByNameTest() {
-        when(personDAO.findById(any(String[].class))).thenReturn(new Person());
+        when(personDAO.findById(anyString(), anyString())).thenReturn(new Person());
         assertEquals(new Person(), personService.findByName("toto_test"));
-        verify(personDAO, Mockito.times(1)).findById(any(String[].class));
+        verify(personDAO, Mockito.times(1)).findById(anyString(), anyString());
     }
 
     @Test
     public void findUnknownPersonByNameTest() {
-        when(personDAO.findById(any(String[].class))).thenReturn(null);
+        when(personDAO.findById(anyString(), anyString())).thenReturn(null);
         assertNull(personService.findByName("toto_test"));
-        verify(personDAO, Mockito.times(1)).findById(any(String[].class));
+        verify(personDAO, Mockito.times(1)).findById(anyString(), anyString());
     }
 
     @Test
     void findInvalidNameTest() {
         assertThrows(InvalidFormattedFullNameException.class, () -> personService.findByName("_"));
-        verify(personDAO, Mockito.times(0)).findById(any(String[].class));
+        verify(personDAO, Mockito.times(0)).findById(anyString(), anyString());
     }
 
     @Test
     public void updateKnownPersonTest() {
-        when(personDAO.findById(any(String[].class))).thenReturn(new Person());
+        when(personDAO.findById(anyString(), anyString())).thenReturn(new Person());
         assertEquals(new Person(), personService.update(new Person()));
-        verify(personDAO, Mockito.times(1)).findById(any(String[].class));
+        verify(personDAO, Mockito.times(1)).findById(anyString(), anyString());
     }
 
     @Test
     public void updateUnknownPersonTest() {
-        when(personDAO.findById(any(String[].class))).thenReturn(null);
+        when(personDAO.findById(anyString(), anyString())).thenReturn(null);
         assertThrows(PersonNotFoundException.class, () -> personService.update(new Person()));
-        verify(personDAO, Mockito.times(1)).findById(any(String[].class));
+        verify(personDAO, Mockito.times(1)).findById(anyString(), anyString());
     }
 
     @Test
     public void deleteKnownPersonTest() {
-        when(personDAO.findById(any(String[].class))).thenReturn(new Person());
+        when(personDAO.findById(anyString(), anyString())).thenReturn(new Person());
         personService.delete("toto_test");
-        verify(personDAO, Mockito.times(1)).findById(any(String[].class));
-        verify(personDAO, Mockito.times(1)).deleteById(any(String[].class));
+        verify(personDAO, Mockito.times(1)).findById(anyString(), anyString());
+        verify(personDAO, Mockito.times(1)).deleteById(anyString(), anyString());
     }
 
     @Test
     public void deleteUnknownPersonTest() {
-        when(personDAO.findById(any(String[].class))).thenReturn(null);
+        when(personDAO.findById(anyString(), anyString())).thenReturn(null);
         assertThrows(PersonNotFoundException.class, () -> personService.delete("toto_test"));
-        verify(personDAO, Mockito.times(1)).findById(any(String[].class));
-        verify(personDAO, Mockito.times(0)).deleteById(any(String[].class));
+        verify(personDAO, Mockito.times(1)).findById(anyString(), anyString());
+        verify(personDAO, Mockito.times(0)).deleteById(anyString(), anyString());
     }
 }

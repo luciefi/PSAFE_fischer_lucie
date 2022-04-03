@@ -31,9 +31,10 @@ public class PersonDAO implements IPersonDAO {
     }
 
     @Override
-    public Person findById(String[] nameArray) {
+    public Person findById(String firstName, String lastName) {
         List<Person> personList = dataSource.getPersons();
-        List<Person> foundPersonList = personList.stream().filter(person -> person.getFirstName().equals(nameArray[0]) && person.getLastName().equals(nameArray[1])).collect(Collectors.toList());
+        List<Person> foundPersonList =
+                personList.stream().filter(person -> person.getFirstName().equals(firstName) && person.getLastName().equals(lastName)).collect(Collectors.toList());
         if (foundPersonList.size() > 0) {
             return foundPersonList.get(0);
         }
@@ -41,8 +42,8 @@ public class PersonDAO implements IPersonDAO {
     }
 
     @Override
-    public void deleteById(String[] nameArray) {
-        dataSource.getPersons().remove(findById(nameArray));
+    public void deleteById(String firstName, String lastName) {
+        dataSource.getPersons().remove(findById(firstName, lastName));
     }
 
     @Override

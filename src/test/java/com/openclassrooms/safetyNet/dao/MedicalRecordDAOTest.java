@@ -58,14 +58,14 @@ public class MedicalRecordDAOTest {
         totoTest.setLastName("test");
         medicalRecords.add(totoTest);
         when(dataSource.getMedicalrecords()).thenReturn(medicalRecords);
-        assertNotNull(medicalRecordDAO.findByIdOrThrow(new String[]{"toto", "test"}));
+        assertNotNull(medicalRecordDAO.findByIdOrThrow("toto", "test"));
         verify(dataSource, Mockito.times(1)).getMedicalrecords();
     }
 
     @Test
     void findUnknownMedicalRecordByNameTest() {
         when(dataSource.getMedicalrecords()).thenReturn(new ArrayList<>());
-        assertNull(medicalRecordDAO.findById(new String[]{"toto", "test"}));
+        assertNull(medicalRecordDAO.findById("toto", "test"));
         verify(dataSource, Mockito.times(1)).getMedicalrecords();
     }
 
@@ -77,7 +77,7 @@ public class MedicalRecordDAOTest {
         totoTest.setLastName("test");
         medicalRecords.add(totoTest);
         when(dataSource.getMedicalrecords()).thenReturn(medicalRecords);
-        assertNull(medicalRecordDAO.findById(new String[]{"toto", "test"}));
+        assertNull(medicalRecordDAO.findById("toto", "test"));
         verify(dataSource, Mockito.times(1)).getMedicalrecords();
     }
 
@@ -89,7 +89,7 @@ public class MedicalRecordDAOTest {
         totoTest.setLastName("testTest");
         medicalRecords.add(totoTest);
         when(dataSource.getMedicalrecords()).thenReturn(medicalRecords);
-        assertNull(medicalRecordDAO.findById(new String[]{"toto", "test"}));
+        assertNull(medicalRecordDAO.findById("toto", "test"));
         verify(dataSource, Mockito.times(1)).getMedicalrecords();
     }
 
@@ -97,8 +97,8 @@ public class MedicalRecordDAOTest {
     void findUnknownMedicalRecordByNameAndThrowTest() {
         when(dataSource.getMedicalrecords()).thenReturn(new ArrayList<>());
         assertThrows(MedicalRecordNotFoundException.class,
-                () -> medicalRecordDAO.findByIdOrThrow(new String[]{
-                "toto", "test"}));
+                () -> medicalRecordDAO.findByIdOrThrow(
+                        "toto", "test"));
         verify(dataSource, Mockito.times(1)).getMedicalrecords();
     }
 
@@ -110,7 +110,7 @@ public class MedicalRecordDAOTest {
         totoTest.setLastName("test");
         medicalRecords.add(totoTest);
         when(dataSource.getMedicalrecords()).thenReturn(medicalRecords);
-        medicalRecordDAO.deleteById(new String[]{"toto", "test"});
+        medicalRecordDAO.deleteById("toto", "test");
         assertEquals(0, medicalRecords.size());
     }
 }

@@ -16,6 +16,7 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -37,68 +38,68 @@ public class MedicalRecordServiceTest {
 
     @Test
     public void saveAlreadyExistingMedicalRecordTest() {
-        when(medicalRecordDAO.findById(any(String[].class))).thenReturn(new MedicalRecord());
+        when(medicalRecordDAO.findById(anyString(), anyString())).thenReturn(new MedicalRecord());
         assertThrows(MedicalRecordAlreadyExistsException.class, () -> medicalRecordService.save(new MedicalRecord()));
         verify(medicalRecordDAO, Mockito.times(0)).save(any(MedicalRecord.class));
-        verify(medicalRecordDAO, Mockito.times(1)).findById(any(String[].class));
+        verify(medicalRecordDAO, Mockito.times(1)).findById(anyString(), anyString());
     }
 
     @Test
     public void saveNewMedicalRecordTest() {
         when(medicalRecordDAO.save(any(MedicalRecord.class))).thenReturn(new MedicalRecord());
-        when(medicalRecordDAO.findById(any(String[].class))).thenReturn(null);
+        when(medicalRecordDAO.findById(anyString(), anyString())).thenReturn(null);
         medicalRecordService.save(new MedicalRecord());
-        verify(medicalRecordDAO, Mockito.times(1)).findById(any(String[].class));
+        verify(medicalRecordDAO, Mockito.times(1)).findById(anyString(), anyString());
         verify(medicalRecordDAO, Mockito.times(1)).save(any(MedicalRecord.class));
     }
 
     @Test
     public void findKnownMedicalRecordByNameTest() {
-        when(medicalRecordDAO.findById(any(String[].class))).thenReturn(new MedicalRecord());
+        when(medicalRecordDAO.findById(anyString(), anyString())).thenReturn(new MedicalRecord());
         assertEquals(new MedicalRecord(), medicalRecordService.findByName("toto_test"));
-        verify(medicalRecordDAO, Mockito.times(1)).findById(any(String[].class));
+        verify(medicalRecordDAO, Mockito.times(1)).findById(anyString(), anyString());
     }
 
     @Test
     public void findUnknownMedicalRecordByNameTest() {
-        when(medicalRecordDAO.findById(any(String[].class))).thenReturn(null);
+        when(medicalRecordDAO.findById(anyString(), anyString())).thenReturn(null);
         assertNull(medicalRecordService.findByName("toto_test"));
-        verify(medicalRecordDAO, Mockito.times(1)).findById(any(String[].class));
+        verify(medicalRecordDAO, Mockito.times(1)).findById(anyString(), anyString());
     }
 
     @Test
     void findInvalidNameTest() {
         assertThrows(InvalidFormattedFullNameException.class, () -> medicalRecordService.findByName("_"));
-        verify(medicalRecordDAO, Mockito.times(0)).findById(any(String[].class));
+        verify(medicalRecordDAO, Mockito.times(0)).findById(anyString(), anyString());
     }
 
     @Test
     public void updateKnownMedicalRecordTest() {
-        when(medicalRecordDAO.findById(any(String[].class))).thenReturn(new MedicalRecord());
+        when(medicalRecordDAO.findById(anyString(), anyString())).thenReturn(new MedicalRecord());
         assertEquals(new MedicalRecord(), medicalRecordService.update(new MedicalRecord()));
-        verify(medicalRecordDAO, Mockito.times(1)).findById(any(String[].class));
+        verify(medicalRecordDAO, Mockito.times(1)).findById(anyString(), anyString());
     }
 
     @Test
     public void updateUnknownMedicalRecordTest() {
-        when(medicalRecordDAO.findById(any(String[].class))).thenReturn(null);
+        when(medicalRecordDAO.findById(anyString(), anyString())).thenReturn(null);
         assertThrows(MedicalRecordNotFoundException.class, () -> medicalRecordService.update(new MedicalRecord()));
-        verify(medicalRecordDAO, Mockito.times(1)).findById(any(String[].class));
+        verify(medicalRecordDAO, Mockito.times(1)).findById(anyString(), anyString());
     }
 
     @Test
     public void deleteKnownMedicalRecordTest() {
-        when(medicalRecordDAO.findById(any(String[].class))).thenReturn(new MedicalRecord());
+        when(medicalRecordDAO.findById(anyString(), anyString())).thenReturn(new MedicalRecord());
         medicalRecordService.delete("toto_test");
-        verify(medicalRecordDAO, Mockito.times(1)).findById(any(String[].class));
-        verify(medicalRecordDAO, Mockito.times(1)).deleteById(any(String[].class));
+        verify(medicalRecordDAO, Mockito.times(1)).findById(anyString(), anyString());
+        verify(medicalRecordDAO, Mockito.times(1)).deleteById(anyString(), anyString());
     }
 
     @Test
     public void deleteUnknownMedicalRecordTest() {
-        when(medicalRecordDAO.findById(any(String[].class))).thenReturn(null);
+        when(medicalRecordDAO.findById(anyString(), anyString())).thenReturn(null);
         assertThrows(MedicalRecordNotFoundException.class, () -> medicalRecordService.delete("toto_test"));
-        verify(medicalRecordDAO, Mockito.times(1)).findById(any(String[].class));
-        verify(medicalRecordDAO, Mockito.times(0)).deleteById(any(String[].class));
+        verify(medicalRecordDAO, Mockito.times(1)).findById(anyString(), anyString());
+        verify(medicalRecordDAO, Mockito.times(0)).deleteById(anyString(), anyString());
     }
 }

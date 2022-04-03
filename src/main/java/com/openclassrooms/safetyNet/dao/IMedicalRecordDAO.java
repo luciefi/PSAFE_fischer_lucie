@@ -9,9 +9,9 @@ public interface IMedicalRecordDAO {
 
     MedicalRecord save(MedicalRecord newMedicalRecord);
 
-    MedicalRecord findById(String[] nameArray);
+    MedicalRecord findById(String firstName, String lastName);
 
-    void deleteById(String[] nameArray);
+    void deleteById(String firstName, String lastName);
 
-    MedicalRecord findByIdOrThrow(String[] strings);
+    MedicalRecord findByIdOrThrow(String firstName, String lastName);
 }

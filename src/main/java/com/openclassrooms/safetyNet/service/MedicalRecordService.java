@@ -5,6 +5,7 @@ import com.openclassrooms.safetyNet.exceptions.InvalidFormattedFullNameException
 import com.openclassrooms.safetyNet.exceptions.MedicalRecordAlreadyExistsException;
 import com.openclassrooms.safetyNet.exceptions.MedicalRecordNotFoundException;
 import com.openclassrooms.safetyNet.model.MedicalRecord;
+import com.openclassrooms.safetyNet.utils.PersonConverter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,11 +44,8 @@ public class MedicalRecordService implements IMedicalRecordService {
 
     @Override
     public MedicalRecord findByName(String fullName) {
-        String[] nameArray = fullName.split("_");
-        if (nameArray.length != 2) {
-            throw new InvalidFormattedFullNameException();
-        }
-        return medicalRecordDAO.findById(nameArray);
+        String[] nameArray = PersonConverter.convertToNameArray(fullName);
+        return medicalRecordDAO.findById(nameArray[0], nameArray[1]);
     }
 
     @Override
@@ -74,7 +72,7 @@ public class MedicalRecordService implements IMedicalRecordService {
             logger.error("Unable to delete. Medical record with name {} not found.", fullName);
             throw new MedicalRecordNotFoundException();
         }
-        medicalRecordDAO.deleteById(fullName.split("_"));
+        String[] nameArray = PersonConverter.convertToNameArray(fullName);
+        medicalRecordDAO.deleteById(nameArray[0], nameArray[1]);
     }
-
 }

@@ -51,9 +51,12 @@ public class BusinessServiceTest {
         when(fireStationDAO.getAddressesForStation(anyInt())).thenReturn(addresses);
 
         List<Person> personList = new ArrayList<>();
-        personList.add((new Person()));
-        personList.add((new Person()));
-        personList.add((new Person()));
+        Person person = new Person();
+        person.setFirstName("");
+        person.setLastName("");
+        personList.add(person);
+        personList.add(person);
+        personList.add(person);
         when(personDAO.findByAddresses(any(List.class))).thenReturn(personList);
 
         MedicalRecord childMedicalRecord = new MedicalRecord();
@@ -64,7 +67,7 @@ public class BusinessServiceTest {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         Date adultBirthDate = formatter.parse(date_string);
         adultMedicalRecord.setBirthdate(adultBirthDate);
-        when(medicalRecordDAO.findById(any(String[].class))).thenReturn(childMedicalRecord).thenReturn(adultMedicalRecord);
+        when(medicalRecordDAO.findById(anyString(), anyString())).thenReturn(childMedicalRecord).thenReturn(adultMedicalRecord);
 
         // Act
         PersonListingForFireStation personListingForFireStation = businessService.getPersonListingForFireStation(1);
@@ -72,7 +75,7 @@ public class BusinessServiceTest {
         // Assert
         verify(fireStationDAO, Mockito.times(1)).getAddressesForStation(anyInt());
         verify(personDAO, Mockito.times(1)).findByAddresses(any(List.class));
-        verify(medicalRecordDAO, Mockito.times(3)).findById(any(String[].class));
+        verify(medicalRecordDAO, Mockito.times(3)).findById(anyString(), anyString());
         Assertions.assertEquals(2, personListingForFireStation.getNumberOfAdult());
         Assertions.assertEquals(1, personListingForFireStation.getNumberOfChildren());
     }
@@ -103,14 +106,14 @@ public class BusinessServiceTest {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         Date adultBirthDate = formatter.parse(date_string);
         adultMedicalRecord.setBirthdate(adultBirthDate);
-        when(medicalRecordDAO.findByIdOrThrow(any(String[].class))).thenReturn(childMedicalRecord).thenReturn(adultMedicalRecord);
+        when(medicalRecordDAO.findByIdOrThrow(anyString(), anyString())).thenReturn(childMedicalRecord).thenReturn(adultMedicalRecord);
 
         // Act
         List<Child> children = businessService.getChildren("address 1");
 
         // Assert
         verify(personDAO, Mockito.times(1)).findByAddress(anyString());
-        verify(medicalRecordDAO, Mockito.times(3)).findByIdOrThrow(any(String[].class));
+        verify(medicalRecordDAO, Mockito.times(3)).findByIdOrThrow(anyString(), anyString());
         Assertions.assertEquals(1, children.size());
         Assertions.assertEquals(2, children.get(0).getHouseholdMembers().size());
     }
@@ -150,7 +153,7 @@ public class BusinessServiceTest {
         when(personDAO.findByAddress(anyString())).thenReturn(personList);
 
         MedicalRecord medicalRecord = new MedicalRecord("", "", new Date(), new ArrayList<>(), new ArrayList<>());
-        when(medicalRecordDAO.findByIdOrThrow(any(String[].class))).thenReturn(medicalRecord);
+        when(medicalRecordDAO.findByIdOrThrow(anyString(), anyString())).thenReturn(medicalRecord);
 
         // Act
         PersonListingForAddress personListingForAddress = businessService.getPersonListingForAddress("my address");
@@ -158,7 +161,7 @@ public class BusinessServiceTest {
         // Assert
         verify(fireStationDAO, Mockito.times(1)).getStationForAddress(anyString());
         verify(personDAO, Mockito.times(1)).findByAddress(anyString());
-        verify(medicalRecordDAO, Mockito.times(3)).findByIdOrThrow(any(String[].class));
+        verify(medicalRecordDAO, Mockito.times(3)).findByIdOrThrow(anyString(), anyString());
         Assertions.assertEquals(2, personListingForAddress.getFireStation());
         Assertions.assertEquals(3, personListingForAddress.getPersonsListForAddress().size());
     }
@@ -175,7 +178,7 @@ public class BusinessServiceTest {
         // Assert
         verify(fireStationDAO, Mockito.times(1)).getStationForAddress(anyString());
         verify(personDAO, Mockito.times(1)).findByAddress(anyString());
-        verify(medicalRecordDAO, Mockito.times(0)).findByIdOrThrow(any(String[].class));
+        verify(medicalRecordDAO, Mockito.times(0)).findByIdOrThrow(anyString(), anyString());
     }
 
     @Test
