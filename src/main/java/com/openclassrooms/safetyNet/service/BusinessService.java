@@ -51,7 +51,7 @@ public class BusinessService implements IBusinessService {
 
         for (Person person : personList) {
             personListingForFireStation.getPersonsListForFireStation().add(PersonConverter.convertToLightweight(person));
-            MedicalRecord medicalRecord = medicalRecordDAO.findById(new String[]{person.getFirstName(), person.getLastName()});
+            MedicalRecord medicalRecord = medicalRecordDAO.findById(person.getFirstName(), person.getLastName());
             if (MedicalRecordUtils.isAChild(medicalRecord)) {
                 nbOfChildren++;
             } else {
@@ -74,7 +74,7 @@ public class BusinessService implements IBusinessService {
         List<Child> children = new ArrayList<>();
 
         for (Person person : householdList) {
-            MedicalRecord medicalRecord = medicalRecordDAO.findByIdOrThrow(new String[]{person.getFirstName(), person.getLastName()});
+            MedicalRecord medicalRecord = medicalRecordDAO.findByIdOrThrow(person.getFirstName(), person.getLastName());
             int age = MedicalRecordUtils.getPersonAge(medicalRecord);
             if (MedicalRecordUtils.isAChild(age)) {
                 children.add(PersonConverter.convertToChild(person, age, householdList));
@@ -102,7 +102,7 @@ public class BusinessService implements IBusinessService {
         List<PersonWithMedicalRecord> personWithMedicalRecordList = personDAO.findByAddress(address)
                 .stream()
                 .map(person -> {
-                    MedicalRecord medicalRecord = medicalRecordDAO.findByIdOrThrow(new String[]{person.getFirstName(), person.getLastName()});
+                    MedicalRecord medicalRecord = medicalRecordDAO.findByIdOrThrow(person.getFirstName(), person.getLastName());
                     return PersonConverter.convertToPersonWithMedicalRecord(person, medicalRecord);
                 })
                 .collect(Collectors.toList());
@@ -121,6 +121,12 @@ public class BusinessService implements IBusinessService {
     @Override
     public List<String> getEmails(String city) {
         return personDAO.findByCity(city).stream().map(Person::getEmail).distinct().sorted()
-        .collect(Collectors.toList());
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public PersonInfo getPersonInfo(String firstName, String lastName) {
+        MedicalRecord medicalRecord = medicalRecordDAO.findByIdOrThrow(firstName, lastName);
+        return PersonConverter.convertToPersonInfo(personDAO.findById(firstName, lastName), medicalRecord);
     }
 }

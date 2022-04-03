@@ -1,5 +1,6 @@
 package com.openclassrooms.safetyNet.utils;
 
+import com.openclassrooms.safetyNet.exceptions.InvalidFormattedFullNameException;
 import com.openclassrooms.safetyNet.model.*;
 
 import java.util.List;
@@ -23,6 +24,33 @@ public class PersonConverter {
                 person.getLastName(),
                 person.getPhone(),
                 MedicalRecordUtils.getPersonAge(medicalRecord),
+                medicalRecord.getMedications(),
+                medicalRecord.getAllergies()
+        );
+    }
+
+    public static String convertToFormattedFullName(Person person){
+        return convertToFormattedFullName(person.getFirstName(), person.getLastName());
+    }
+
+    public static String convertToFormattedFullName(String firstName, String lastName){
+        return firstName + "_" + lastName;
+    }
+
+    public static String[] convertToNameArray(String fullName) {
+        String[] nameArray = fullName.split("_");
+        if(nameArray.length != 2){
+            throw new InvalidFormattedFullNameException();
+        }
+        return nameArray;
+    }
+
+    public static PersonInfo convertToPersonInfo(Person person, MedicalRecord medicalRecord) {
+        return new PersonInfo(person.getFirstName(),
+                person.getLastName(),
+                person.getAddress(),
+                MedicalRecordUtils.getPersonAge(medicalRecord),
+                person.getEmail(),
                 medicalRecord.getMedications(),
                 medicalRecord.getAllergies()
         );

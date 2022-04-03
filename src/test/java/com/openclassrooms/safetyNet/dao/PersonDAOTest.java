@@ -57,14 +57,14 @@ public class PersonDAOTest {
         totoTest.setLastName("test");
         persons.add(totoTest);
         when(dataSource.getPersons()).thenReturn(persons);
-        assertNotNull(personDAO.findById(new String[]{"toto", "test"}));
+        assertNotNull(personDAO.findById("toto", "test"));
         verify(dataSource, Mockito.times(1)).getPersons();
     }
 
     @Test
     void findUnknownPersonByNameTest() {
         when(dataSource.getPersons()).thenReturn(new ArrayList<>());
-        assertNull(personDAO.findById(new String[]{"toto", "test"}));
+        assertNull(personDAO.findById("toto", "test"));
         verify(dataSource, Mockito.times(1)).getPersons();
     }
 
@@ -76,7 +76,7 @@ public class PersonDAOTest {
         totoTest.setLastName("test");
         persons.add(totoTest);
         when(dataSource.getPersons()).thenReturn(persons);
-        assertNull(personDAO.findById(new String[]{"toto", "test"}));
+        assertNull(personDAO.findById("toto", "test"));
         verify(dataSource, Mockito.times(1)).getPersons();
     }
 
@@ -88,7 +88,7 @@ public class PersonDAOTest {
         totoTest.setLastName("testTest");
         persons.add(totoTest);
         when(dataSource.getPersons()).thenReturn(persons);
-        assertNull(personDAO.findById(new String[]{"toto", "test"}));
+        assertNull(personDAO.findById("toto", "test"));
         verify(dataSource, Mockito.times(1)).getPersons();
     }
 
@@ -100,7 +100,7 @@ public class PersonDAOTest {
         totoTest.setLastName("test");
         persons.add(totoTest);
         when(dataSource.getPersons()).thenReturn(persons);
-        personDAO.deleteById(new String[]{"toto", "test"});
+        personDAO.deleteById("toto", "test");
         assertEquals(0, persons.size());
     }
 

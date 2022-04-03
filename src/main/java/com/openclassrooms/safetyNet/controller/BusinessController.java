@@ -1,6 +1,7 @@
 package com.openclassrooms.safetyNet.controller;
 
 import com.openclassrooms.safetyNet.model.Child;
+import com.openclassrooms.safetyNet.model.PersonInfo;
 import com.openclassrooms.safetyNet.model.PersonListingForAddress;
 import com.openclassrooms.safetyNet.model.PersonListingForFireStation;
 import com.openclassrooms.safetyNet.service.IBusinessService;
@@ -57,6 +58,13 @@ public class BusinessController {
     public ResponseEntity<?> getEmailAddressForCity(@RequestParam(value = "city") String city) {
         List<String> emails = businessService.getEmails(city);
         return new ResponseEntity<>(emails, HttpStatus.OK);
+    }
+
+    @GetMapping("/personInfo")
+    public ResponseEntity<?> getPersonInfo(@RequestParam(value = "firstName") String firstName,
+                                           @RequestParam(value = "lastName") String lastName) {
+        PersonInfo personInfo = businessService.getPersonInfo(firstName, lastName);
+        return new ResponseEntity<>(personInfo, HttpStatus.OK);
     }
 }
 
