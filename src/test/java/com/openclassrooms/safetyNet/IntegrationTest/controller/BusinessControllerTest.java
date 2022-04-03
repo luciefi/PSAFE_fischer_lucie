@@ -1,9 +1,6 @@
 package com.openclassrooms.safetyNet.IntegrationTest.controller;
 
-import com.openclassrooms.safetyNet.model.Child;
-import com.openclassrooms.safetyNet.model.FireStation;
-import com.openclassrooms.safetyNet.model.PersonListingForAddress;
-import com.openclassrooms.safetyNet.model.PersonListingForFireStation;
+import com.openclassrooms.safetyNet.model.*;
 import com.openclassrooms.safetyNet.service.BusinessService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -72,4 +69,11 @@ public class BusinessControllerTest {
         verify(businessService, Mockito.times(1)).getEmails(anyString());
     }
 
+    @Test
+    void getPersonInfoTest() throws Exception {
+        when(businessService.getPersonInfo(anyString(), anyString())).thenReturn(new PersonInfo());
+        mockMvc.perform(get("/personInfo").param("firstName", "f").param("lastName", "l"))
+                .andExpect(status().isOk());
+        verify(businessService, Mockito.times(1)).getPersonInfo(anyString(), anyString());
+    }
 }

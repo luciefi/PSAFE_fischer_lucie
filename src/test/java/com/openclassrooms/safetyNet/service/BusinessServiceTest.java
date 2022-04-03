@@ -203,4 +203,18 @@ public class BusinessServiceTest {
         Assertions.assertEquals(2, emails.size());
     }
 
+    @Test
+    public void getPersonInfoTest() {
+        // Arrange
+        when(personDAO.findById(anyString(), anyString())).thenReturn(new Person());
+        MedicalRecord medicalRecord = new MedicalRecord("", "", new Date(), new ArrayList<>(), new ArrayList<>());
+        when(medicalRecordDAO.findByIdOrThrow(anyString(), anyString())).thenReturn(medicalRecord);
+
+        // Act
+        PersonInfo personInfo = businessService.getPersonInfo("", "");
+
+        // Assert
+        verify(medicalRecordDAO, Mockito.times(1)).findByIdOrThrow(anyString(), anyString());
+        verify(personDAO, Mockito.times(1)).findById(anyString(), anyString());
+    }
 }

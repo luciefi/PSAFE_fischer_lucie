@@ -126,7 +126,7 @@ public class BusinessService implements IBusinessService {
 
     @Override
     public PersonInfo getPersonInfo(String firstName, String lastName) {
-        MedicalRecord medicalRecord = medicalRecordDAO.findById(firstName, lastName);
+        MedicalRecord medicalRecord = medicalRecordDAO.findByIdOrThrow(firstName, lastName);
         return PersonConverter.convertToPersonInfo(personDAO.findById(firstName, lastName), medicalRecord);
     }
 }
