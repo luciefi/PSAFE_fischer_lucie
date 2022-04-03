@@ -14,4 +14,6 @@ public interface IBusinessService {
     List<String> getPhoneNumbers(int firestation);
 
     PersonListingForAddress getPersonListingForAddress(String address);
+
+    List<String> getEmails(String city);
 }

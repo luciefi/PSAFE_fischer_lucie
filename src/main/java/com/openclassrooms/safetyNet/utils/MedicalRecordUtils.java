@@ -11,6 +11,9 @@ import java.util.Optional;
 
 public class MedicalRecordUtils {
 
+    private MedicalRecordUtils() {
+    }
+
     public static int getPersonAge(MedicalRecord medicalRecord) {
         Date birthDate = medicalRecord.getBirthdate();
 

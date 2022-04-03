@@ -54,4 +54,9 @@ public class PersonDAO implements IPersonDAO {
     public List<Person> findByAddress(String address) {
         return findAll().stream().filter(person -> address.equals(person.getAddress())).collect(Collectors.toList());
     }
+
+    @Override
+    public List<Person> findByCity(String city) {
+        return findAll().stream().filter(person -> city.equals(person.getCity())).collect(Collectors.toList());
+    }
 }

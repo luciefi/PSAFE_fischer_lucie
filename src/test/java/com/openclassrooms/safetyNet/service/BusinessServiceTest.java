@@ -7,6 +7,7 @@ import com.openclassrooms.safetyNet.exceptions.FireStationNotFoundException;
 import com.openclassrooms.safetyNet.exceptions.MedicalRecordNotFoundException;
 import com.openclassrooms.safetyNet.model.*;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -176,4 +177,27 @@ public class BusinessServiceTest {
         verify(personDAO, Mockito.times(1)).findByAddress(anyString());
         verify(medicalRecordDAO, Mockito.times(0)).findByIdOrThrow(any(String[].class));
     }
+
+    @Test
+    public void getEmailsTest() {
+        // Arrange
+        List<Person> personList = new ArrayList<>();
+        Person person = new Person();
+        person.setEmail("abc@de.com");
+        personList.add(person);
+        personList.add(person);
+        Person person2 = new Person();
+        person2.setEmail("def@ab.com");
+        personList.add(person2);
+
+        when(personDAO.findByCity(anyString())).thenReturn(personList);
+
+        // Act
+        List<String> emails = businessService.getEmails("my city");
+
+        // Assert
+        verify(personDAO, Mockito.times(1)).findByCity(anyString());
+        Assertions.assertEquals(2, emails.size());
+    }
+
 }

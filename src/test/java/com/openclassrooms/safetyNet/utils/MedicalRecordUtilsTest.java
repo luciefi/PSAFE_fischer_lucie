@@ -21,9 +21,9 @@ public class MedicalRecordUtilsTest {
     @Test
     public void isNotAChildTest() throws ParseException {
         MedicalRecord medicalRecord = new MedicalRecord();
-        String date_string = "01/01/1989";
+        String dateString = "01/01/1989";
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        Date adultBirthDate = formatter.parse(date_string);
+        Date adultBirthDate = formatter.parse(dateString);
         medicalRecord.setBirthdate(adultBirthDate);
         Assertions.assertFalse(MedicalRecordUtils.isAChild(medicalRecord));
     }

@@ -149,4 +149,26 @@ public class PersonDAOTest {
         verify(dataSource, Mockito.times(1)).getPersons();
         assertEquals(1, personsAtAddress.size());
     }
+
+    @Test
+    public void findByCityTest(){
+        // Arrange
+        List<Person> persons = new ArrayList<>();
+        Person person1 = new Person();
+        person1.setCity("city 1");
+        persons.add(person1);
+        Person person2 = new Person();
+        person2.setCity("city 2");
+        persons.add(person2);
+        Person person3 = new Person();
+        person3.setCity("city 2");
+        persons.add(person3);
+        when(dataSource.getPersons()).thenReturn(persons);
+
+        // Act
+        List<Person> personsAtAddress = personDAO.findByCity("city 2");
+        // Assert
+        verify(dataSource, Mockito.times(1)).getPersons();
+        assertEquals(2, personsAtAddress.size());
+    }
 }

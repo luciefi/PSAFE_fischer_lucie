@@ -48,9 +48,15 @@ public class BusinessController {
     }
 
     @GetMapping("/fire")
-    public ResponseEntity<?> getPeopleAndStationForAddress(@RequestParam(value = "address")String address){
+    public ResponseEntity<?> getPeopleAndStationForAddress(@RequestParam(value = "address") String address) {
         PersonListingForAddress personListingForAddress = businessService.getPersonListingForAddress(address);
         return new ResponseEntity<>(personListingForAddress, HttpStatus.OK);
+    }
+
+    @GetMapping("/communityEmail")
+    public ResponseEntity<?> getEmailAddressForCity(@RequestParam(value = "city") String city) {
+        List<String> emails = businessService.getEmails(city);
+        return new ResponseEntity<>(emails, HttpStatus.OK);
     }
 }
 

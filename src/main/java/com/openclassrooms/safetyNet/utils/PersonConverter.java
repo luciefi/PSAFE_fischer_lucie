@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 
 public class PersonConverter {
 
+    private PersonConverter(){}
+
     public static LightweightPerson convertToLightweight(Person person) {
         return new LightweightPerson(person.getFirstName(), person.getLastName(), person.getAddress(), person.getPhone());
     }
