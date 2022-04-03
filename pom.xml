@@ -71,6 +71,8 @@
 				<configuration>
 					<excludes>
 						<exclude>com/openclassrooms/safetyNet/model/*</exclude>
+						<exclude>**/*DataSource.class</exclude>
+						<exclude>**/*SafetyNetApplication.class</exclude>
 					</excludes>
 				</configuration>
 				<executions>

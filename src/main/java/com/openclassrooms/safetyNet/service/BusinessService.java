@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class BusinessService implements IBusinessService {
@@ -119,6 +120,7 @@ public class BusinessService implements IBusinessService {
 
     @Override
     public List<String> getEmails(String city) {
-        return personDAO.findByCity(city).stream().map(Person::getEmail).distinct().sorted().collect(Collectors.toList());
+        return personDAO.findByCity(city).stream().map(Person::getEmail).distinct().sorted()
+        .collect(Collectors.toList());
     }
 }

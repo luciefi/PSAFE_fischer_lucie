@@ -32,7 +32,7 @@ public class BusinessControllerTest {
     public MockMvc mockMvc;
 
     @Test
-    void getPersonsForGivenStation() throws Exception {
+    void getPersonsForGivenStationTest() throws Exception {
         when(businessService.getPersonListingForFireStation(anyInt())).thenReturn(new PersonListingForFireStation());
         mockMvc.perform(get("/firestation").param("stationNumber", "1"))
                 .andExpect(status().isOk());
@@ -41,16 +41,15 @@ public class BusinessControllerTest {
     }
 
     @Test
-    void getChildrenForGivenAddress() throws Exception {
+    void getChildrenForGivenAddressTest() throws Exception {
         when(businessService.getChildren(anyString())).thenReturn(new ArrayList<>());
         mockMvc.perform(get("/childAlert").param("address","my address"))
                 .andExpect(status().isOk());
         verify(businessService, Mockito.times(1)).getChildren(anyString());
-
     }
 
     @Test
-    void getPhoneNumbersForStation() throws Exception {
+    void getPhoneNumbersForStationTest() throws Exception {
         when(businessService.getPhoneNumbers(anyInt())).thenReturn(new ArrayList<>());
         mockMvc.perform(get("/phoneAlert").param("firestation", "1"))
                 .andExpect(status().isOk());
@@ -58,11 +57,19 @@ public class BusinessControllerTest {
     }
 
     @Test
-    void getPeopleAndStationForAddress() throws Exception {
+    void getPeopleAndStationForAddressTest() throws Exception {
         when(businessService.getPersonListingForAddress(anyString())).thenReturn(new PersonListingForAddress());
         mockMvc.perform(get("/fire").param("address", "my address"))
                 .andExpect(status().isOk());
         verify(businessService, Mockito.times(1)).getPersonListingForAddress(anyString());
+    }
+
+    @Test
+    void getEmailAddressForCityTest() throws Exception {
+        when(businessService.getEmails(anyString())).thenReturn(new ArrayList<>());
+        mockMvc.perform(get("/communityEmail").param("city", "my city"))
+                .andExpect(status().isOk());
+        verify(businessService, Mockito.times(1)).getEmails(anyString());
     }
 
 }
