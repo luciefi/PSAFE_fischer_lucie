@@ -23,25 +23,19 @@ public class BusinessController {
     }
 
     @GetMapping("/firestation")
-    public ResponseEntity<?> getPersonsForGivenStation(
-            @RequestParam int stationNumber
-    ) {
+    public ResponseEntity<?> getPersonsForGivenStation(@RequestParam int stationNumber) {
         PersonListingForFireStation personListingForFireStation = businessService.getPersonListingForFireStation(stationNumber);
         return new ResponseEntity<>(personListingForFireStation, HttpStatus.OK);
     }
 
     @GetMapping("/childAlert")
-    public ResponseEntity<?> getChildrenForGivenAddress(
-            @RequestParam String address
-    ) {
+    public ResponseEntity<?> getChildrenForGivenAddress(@RequestParam String address) {
         List<Child> children = businessService.getChildren(address);
         return new ResponseEntity<>(children, HttpStatus.OK);
     }
 
     @GetMapping("/phoneAlert")
-    public ResponseEntity<?> getPhoneNumbersForStation(
-            @RequestParam int firestation
-    ) {
+    public ResponseEntity<?> getPhoneNumbersForStation(@RequestParam int firestation) {
         List<String> phoneNumbers = businessService.getPhoneNumbers(firestation);
         return new ResponseEntity<>(phoneNumbers, HttpStatus.OK);
     }
@@ -59,20 +53,15 @@ public class BusinessController {
     }
 
     @GetMapping("/personInfo")
-    public ResponseEntity<?> getPersonInfo(@RequestParam String firstName,
-                                           @RequestParam String lastName) {
+    public ResponseEntity<?> getPersonInfo(@RequestParam String firstName, @RequestParam String lastName) {
         PersonInfo personInfo = businessService.getPersonInfo(firstName, lastName);
         return new ResponseEntity<>(personInfo, HttpStatus.OK);
     }
 
     @GetMapping("/flood/stations")
     public ResponseEntity<?> getPersonsForListOfStations(@RequestParam List<Integer> stations) {
-        HashMap<Integer, HashMap<String, List<PersonWithMedicalRecord>>> personMap =
+        List<StationWithAddressAndPersonList> stationWithAddressAndPersonList =
                 businessService.getPersonsForListOfStations(stations);
-        return new ResponseEntity<>(personMap, HttpStatus.OK);
+        return new ResponseEntity<>(stationWithAddressAndPersonList, HttpStatus.OK);
     }
-
 }
-
-
-

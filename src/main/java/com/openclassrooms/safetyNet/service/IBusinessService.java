@@ -18,5 +18,5 @@ public interface IBusinessService {
 
     PersonInfo getPersonInfo(String firstName, String lastName);
 
-    HashMap<Integer, HashMap<String, List<PersonWithMedicalRecord>>> getPersonsForListOfStations(List<Integer> stations);
+    List<StationWithAddressAndPersonList> getPersonsForListOfStations(List<Integer> stations);
 }

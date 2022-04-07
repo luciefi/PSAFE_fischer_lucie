@@ -138,30 +138,33 @@ public class BusinessService implements IBusinessService {
     }
 
     @Override
-    public HashMap<Integer, HashMap<String, List<PersonWithMedicalRecord>>> getPersonsForListOfStations(List<Integer> stations) {
-        HashMap<Integer, HashMap<String, List<PersonWithMedicalRecord>>> personMap =
-                new HashMap<>();
+    public List<StationWithAddressAndPersonList> getPersonsForListOfStations(List<Integer> stations) {
+        List<StationWithAddressAndPersonList> stationList = new ArrayList<>();
         stations.forEach(station -> {
-            HashMap<String, List<PersonWithMedicalRecord>> valueForStation =
-                    getPersonsForSingleStation(station);
-            personMap.put(station, valueForStation);
+            StationWithAddressAndPersonList stationWithAddressAndPerson =
+                    new StationWithAddressAndPersonList();
+            stationWithAddressAndPerson.setStation(station);
+            stationWithAddressAndPerson.setAddressWithPersonLists(getPersonsForSingleStation(station));
+            stationList.add(stationWithAddressAndPerson);
 
         });
-        return personMap;
+        return stationList;
     }
 
-    private HashMap<String, List<PersonWithMedicalRecord>> getPersonsForSingleStation(Integer station) {
+    private List<AddressWithPersonList> getPersonsForSingleStation(Integer station) {
         List<String> addresses = fireStationDAO.getAddressesForStation(station);
-        HashMap<String, List<PersonWithMedicalRecord>> addressPersonMap =
-                new HashMap<>();
+        List<AddressWithPersonList> addressPersonMap = new ArrayList<>();
         addresses.forEach(address -> {
+            AddressWithPersonList addressWithPersonList = new AddressWithPersonList();
+            addressWithPersonList.setAddress(address);
             List<PersonWithMedicalRecord> personList =
                     personDAO.findByAddress(address).stream().map(person -> {
                         MedicalRecord medicalRecord =
                                 medicalRecordService.findByFirstAndLastNamesOrThrow(person.getFirstName(), person.getLastName());
                         return PersonConverter.convertToPersonWithMedicalRecord(person, medicalRecord);
                     }).collect(Collectors.toList());
-            addressPersonMap.put(address, personList);
+            addressWithPersonList.setAddressWithPersonLists(personList);
+            addressPersonMap.add(addressWithPersonList);
         });
         return addressPersonMap;
     }

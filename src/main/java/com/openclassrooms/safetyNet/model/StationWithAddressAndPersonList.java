@@ -6,10 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-@AllArgsConstructor
-public class StationWithAddressandPersonList {
-    private String firstName;
-    private String lastName;
-    private int age;
-    List<Person> householdMembers;
+public class StationWithAddressAndPersonList {
+    private int station;
+    List<AddressWithPersonList> addressWithPersonLists;
 }
