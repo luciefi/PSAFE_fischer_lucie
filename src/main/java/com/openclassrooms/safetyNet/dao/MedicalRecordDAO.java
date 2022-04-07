@@ -48,6 +48,7 @@ public class MedicalRecordDAO implements IMedicalRecordDAO {
         dataSource.getMedicalrecords().remove(findById(firstName, lastName));
     }
 
+    //TODO déplacer dans service
     @Override
     public MedicalRecord findByIdOrThrow(String firstName, String lastName) {
         MedicalRecord medicalRecord = findById(firstName, lastName);

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,11 +23,13 @@ import java.util.stream.Stream;
 @Service
 public class BusinessService implements IBusinessService {
 
-    private static final Logger logger = LogManager.getLogger(FireStationService.class);
+    private static final Logger logger = LogManager.getLogger(BusinessService.class);
 
     private final IPersonDAO personDAO;
     private final IFireStationDAO fireStationDAO;
     private final IMedicalRecordDAO medicalRecordDAO;
+
+    // TODO import medical record service pour le findby
 
     @Autowired
     public BusinessService(IPersonDAO personDAO, IFireStationDAO fireStationDAO, IMedicalRecordDAO medicalRecordDAO) {
@@ -128,5 +131,33 @@ public class BusinessService implements IBusinessService {
     public PersonInfo getPersonInfo(String firstName, String lastName) {
         MedicalRecord medicalRecord = medicalRecordDAO.findByIdOrThrow(firstName, lastName);
         return PersonConverter.convertToPersonInfo(personDAO.findById(firstName, lastName), medicalRecord);
+    }
+
+    @Override
+    public HashMap<Integer, HashMap<String, List<PersonWithMedicalRecord>>> getPersonsForListOfStations(List<Integer> stations) {
+        HashMap<Integer, HashMap<String, List<PersonWithMedicalRecord>>> personMap =
+                new HashMap<>();
+        stations.forEach(station -> {
+            HashMap<String, List<PersonWithMedicalRecord>> valueForStation =
+                    getPersonsForSingleStation(station);
+            personMap.put(station, valueForStation);
+
+        });
+        return personMap;
+    }
+
+    private HashMap<String, List<PersonWithMedicalRecord>> getPersonsForSingleStation(Integer station) {
+        List<String> addresses = fireStationDAO.getAddressesForStation(station);
+        HashMap<String, List<PersonWithMedicalRecord>> addressPersonMap =
+                new HashMap<>();
+        addresses.forEach(address -> {
+            List<PersonWithMedicalRecord> personList =
+                    personDAO.findByAddress(address).stream().map(person -> {
+                        MedicalRecord medicalRecord = medicalRecordDAO.findByIdOrThrow(person.getFirstName(), person.getLastName());
+                        return PersonConverter.convertToPersonWithMedicalRecord(person, medicalRecord);
+                    }).collect(Collectors.toList());
+            addressPersonMap.put(address, personList);
+        });
+        return addressPersonMap;
     }
 }

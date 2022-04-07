@@ -16,5 +16,7 @@ public interface IFireStationDAO {
 
     List<String> getAddressesForStation(int stationNumber);
 
+    // TODO renommer les dao id -> firstName, lastName
+    // TODO renommer findByAddressAndMapStation
     Optional<Integer> getStationForAddress(String address);
 }

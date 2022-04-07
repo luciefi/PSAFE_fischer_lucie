@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
@@ -214,6 +215,7 @@ public class BusinessServiceTest {
         PersonInfo personInfo = businessService.getPersonInfo("", "");
 
         // Assert
+        assertNull(personInfo);
         verify(medicalRecordDAO, Mockito.times(1)).findByIdOrThrow(anyString(), anyString());
         verify(personDAO, Mockito.times(1)).findById(anyString(), anyString());
     }

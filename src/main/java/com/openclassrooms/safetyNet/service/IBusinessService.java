@@ -1,10 +1,8 @@
 package com.openclassrooms.safetyNet.service;
 
-import com.openclassrooms.safetyNet.model.Child;
-import com.openclassrooms.safetyNet.model.PersonInfo;
-import com.openclassrooms.safetyNet.model.PersonListingForAddress;
-import com.openclassrooms.safetyNet.model.PersonListingForFireStation;
+import com.openclassrooms.safetyNet.model.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 public interface IBusinessService {
@@ -19,4 +17,6 @@ public interface IBusinessService {
     List<String> getEmails(String city);
 
     PersonInfo getPersonInfo(String firstName, String lastName);
+
+    HashMap<Integer, HashMap<String, List<PersonWithMedicalRecord>>> getPersonsForListOfStations(List<Integer> stations);
 }

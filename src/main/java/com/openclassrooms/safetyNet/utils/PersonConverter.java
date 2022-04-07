@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class PersonConverter {
-
+// TODO ajouter class test (2 cas par méthode min)
     private PersonConverter(){}
 
     public static LightweightPerson convertToLightweight(Person person) {
