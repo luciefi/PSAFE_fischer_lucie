@@ -220,4 +220,40 @@ public class BusinessServiceTest {
         verify(medicalRecordService, Mockito.times(1)).findByFirstAndLastNamesOrThrow(anyString(), anyString());
         verify(personDAO, Mockito.times(1)).findByFirstAndLastNames(anyString(), anyString());
     }
+
+    @Test
+    public void getPersonsForListOfStations() {
+        // Arrange
+        List<Person> personList = new ArrayList<>();
+        Person person = new Person();
+        person.setFirstName("");
+        person.setLastName("");
+        personList.add(person);
+        personList.add(person);
+        when(personDAO.findByAddress(anyString())).thenReturn(personList);
+
+        MedicalRecord medicalRecord = new MedicalRecord("", "", new Date(), new ArrayList<>(),
+                new ArrayList<>());
+        when(medicalRecordService.findByFirstAndLastNamesOrThrow(anyString(), anyString())).thenReturn(medicalRecord);
+
+        List<String> addresses = new ArrayList<>();
+        addresses.add("my address");
+        addresses.add("my address 2");
+        when(fireStationDAO.getAddressesForStation(anyInt())).thenReturn(addresses);
+
+        List<Integer> stations = new ArrayList<>();
+        stations.add(1);
+        stations.add(2);
+
+        // Act
+        List<StationWithAddressAndPersonList> resultList =
+                businessService.getPersonsForListOfStations(stations);
+
+        // Assert
+        assertNotNull(resultList);
+        verify(personDAO, Mockito.times(4)).findByAddress(anyString());
+        verify(medicalRecordService, Mockito.times(8)).findByFirstAndLastNamesOrThrow(anyString()
+                , anyString());
+        verify(fireStationDAO, Mockito.times(2)).getAddressesForStation(anyInt());
+    }
 }

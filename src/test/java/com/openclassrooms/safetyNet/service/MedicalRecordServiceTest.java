@@ -62,6 +62,14 @@ public class MedicalRecordServiceTest {
     }
 
     @Test
+    public void findKnownMedicalRecordOrThrowByNameTest() {
+        when(medicalRecordDAO.findByFirstAndLastNames(anyString(), anyString())).thenReturn(new MedicalRecord());
+        assertEquals(new MedicalRecord(), medicalRecordService.findByFirstAndLastNamesOrThrow(
+                "toto", "test"));
+        verify(medicalRecordDAO, Mockito.times(1)).findByFirstAndLastNames(anyString(), anyString());
+    }
+
+    @Test
     public void findUnknownMedicalRecordByNameTest() {
         when(medicalRecordDAO.findByFirstAndLastNames(anyString(), anyString())).thenReturn(null);
         assertNull(medicalRecordService.findByName("toto_test"));

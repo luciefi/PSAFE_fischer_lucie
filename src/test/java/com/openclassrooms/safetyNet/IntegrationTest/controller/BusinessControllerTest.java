@@ -11,6 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
@@ -75,5 +76,13 @@ public class BusinessControllerTest {
         mockMvc.perform(get("/personInfo").param("firstName", "f").param("lastName", "l"))
                 .andExpect(status().isOk());
         verify(businessService, Mockito.times(1)).getPersonInfo(anyString(), anyString());
+    }
+
+    @Test
+    void getPersonsForListOfStations() throws Exception {
+        when(businessService.getPersonsForListOfStations(any(List.class))).thenReturn(new ArrayList());
+        mockMvc.perform(get("/flood/stations").param("stations", "1,2"))
+                .andExpect(status().isOk());
+        verify(businessService, Mockito.times(1)).getPersonsForListOfStations(any(List.class));
     }
 }
