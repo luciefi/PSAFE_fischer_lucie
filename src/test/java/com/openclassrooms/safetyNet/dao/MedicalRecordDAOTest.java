@@ -1,7 +1,6 @@
 package com.openclassrooms.safetyNet.dao;
 
 import com.openclassrooms.safetyNet.DataSource;
-import com.openclassrooms.safetyNet.exceptions.MedicalRecordNotFoundException;
 import com.openclassrooms.safetyNet.model.MedicalRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,14 +57,14 @@ public class MedicalRecordDAOTest {
         totoTest.setLastName("test");
         medicalRecords.add(totoTest);
         when(dataSource.getMedicalrecords()).thenReturn(medicalRecords);
-        assertNotNull(medicalRecordDAO.findByIdOrThrow("toto", "test"));
+        assertNotNull(medicalRecordDAO.findByFirstAndLastNames("toto", "test"));
         verify(dataSource, Mockito.times(1)).getMedicalrecords();
     }
 
     @Test
     void findUnknownMedicalRecordByNameTest() {
         when(dataSource.getMedicalrecords()).thenReturn(new ArrayList<>());
-        assertNull(medicalRecordDAO.findById("toto", "test"));
+        assertNull(medicalRecordDAO.findByFirstAndLastNames("toto", "test"));
         verify(dataSource, Mockito.times(1)).getMedicalrecords();
     }
 
@@ -77,7 +76,7 @@ public class MedicalRecordDAOTest {
         totoTest.setLastName("test");
         medicalRecords.add(totoTest);
         when(dataSource.getMedicalrecords()).thenReturn(medicalRecords);
-        assertNull(medicalRecordDAO.findById("toto", "test"));
+        assertNull(medicalRecordDAO.findByFirstAndLastNames("toto", "test"));
         verify(dataSource, Mockito.times(1)).getMedicalrecords();
     }
 
@@ -89,16 +88,7 @@ public class MedicalRecordDAOTest {
         totoTest.setLastName("testTest");
         medicalRecords.add(totoTest);
         when(dataSource.getMedicalrecords()).thenReturn(medicalRecords);
-        assertNull(medicalRecordDAO.findById("toto", "test"));
-        verify(dataSource, Mockito.times(1)).getMedicalrecords();
-    }
-
-    @Test
-    void findUnknownMedicalRecordByNameAndThrowTest() {
-        when(dataSource.getMedicalrecords()).thenReturn(new ArrayList<>());
-        assertThrows(MedicalRecordNotFoundException.class,
-                () -> medicalRecordDAO.findByIdOrThrow(
-                        "toto", "test"));
+        assertNull(medicalRecordDAO.findByFirstAndLastNames("toto", "test"));
         verify(dataSource, Mockito.times(1)).getMedicalrecords();
     }
 
@@ -110,7 +100,7 @@ public class MedicalRecordDAOTest {
         totoTest.setLastName("test");
         medicalRecords.add(totoTest);
         when(dataSource.getMedicalrecords()).thenReturn(medicalRecords);
-        medicalRecordDAO.deleteById("toto", "test");
+        medicalRecordDAO.deleteByFirstAndLastNames("toto", "test");
         assertEquals(0, medicalRecords.size());
     }
 }

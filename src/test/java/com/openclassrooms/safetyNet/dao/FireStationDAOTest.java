@@ -56,7 +56,7 @@ public class FireStationDAOTest {
         totoTest.setAddress("1 Culver St");
         fireStations.add(totoTest);
         when(dataSource.getFirestations()).thenReturn(fireStations);
-        assertNotNull(fireStationDAO.findById("1 Culver St"));
+        assertNotNull(fireStationDAO.findByAddress("1 Culver St"));
         verify(dataSource, Mockito.times(1)).getFirestations();
     }
 
@@ -67,7 +67,7 @@ public class FireStationDAOTest {
         totoTest.setAddress("1 Culver St");
         fireStations.add(totoTest);
         when(dataSource.getFirestations()).thenReturn(fireStations);
-        assertNull(fireStationDAO.findById("2 Culver St"));
+        assertNull(fireStationDAO.findByAddress("2 Culver St"));
         verify(dataSource, Mockito.times(1)).getFirestations();
     }
 
@@ -78,7 +78,7 @@ public class FireStationDAOTest {
         totoTest.setAddress("1 Culver St");
         fireStations.add(totoTest);
         when(dataSource.getFirestations()).thenReturn(fireStations);
-        fireStationDAO.deleteById("1 Culver St");
+        fireStationDAO.deleteByAddress("1 Culver St");
         assertEquals(0, fireStations.size());
     }
 
@@ -106,7 +106,7 @@ public class FireStationDAOTest {
         fireStations.add(new FireStation("address 3", 2));
         when(dataSource.getFirestations()).thenReturn(fireStations);
         // Act
-        Optional<Integer> station = fireStationDAO.getStationForAddress("address 2");
+        Optional<Integer> station = fireStationDAO.findByAddressAndMapToStation("address 2");
         // Assert
         verify(dataSource, Mockito.times(1)).getFirestations();
         assertTrue(station.isPresent());

@@ -32,7 +32,7 @@ public class MedicalRecordDAO implements IMedicalRecordDAO {
     }
 
     @Override
-    public MedicalRecord findById(String firstName, String lastName) {
+    public MedicalRecord findByFirstAndLastNames(String firstName, String lastName) {
         List<MedicalRecord> medicalRecordList = dataSource.getMedicalrecords();
         List<MedicalRecord> foundMedicalRecordList = medicalRecordList.stream()
                 .filter(medicalRecord -> medicalRecord.getFirstName().equals(firstName) && medicalRecord.getLastName().equals(lastName))
@@ -44,17 +44,7 @@ public class MedicalRecordDAO implements IMedicalRecordDAO {
     }
 
     @Override
-    public void deleteById(String firstName, String lastName) {
-        dataSource.getMedicalrecords().remove(findById(firstName, lastName));
-    }
-
-    //TODO déplacer dans service
-    @Override
-    public MedicalRecord findByIdOrThrow(String firstName, String lastName) {
-        MedicalRecord medicalRecord = findById(firstName, lastName);
-        if (medicalRecord == null) {
-            throw new MedicalRecordNotFoundException();
-        }
-        return medicalRecord;
+    public void deleteByFirstAndLastNames(String firstName, String lastName) {
+        dataSource.getMedicalrecords().remove(findByFirstAndLastNames(firstName, lastName));
     }
 }

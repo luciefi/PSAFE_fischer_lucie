@@ -4,7 +4,6 @@ import com.openclassrooms.safetyNet.dao.IFireStationDAO;
 import com.openclassrooms.safetyNet.dao.IMedicalRecordDAO;
 import com.openclassrooms.safetyNet.dao.IPersonDAO;
 import com.openclassrooms.safetyNet.exceptions.FireStationNotFoundException;
-import com.openclassrooms.safetyNet.exceptions.MedicalRecordNotFoundException;
 import com.openclassrooms.safetyNet.model.*;
 import com.openclassrooms.safetyNet.utils.PersonConverter;
 import com.openclassrooms.safetyNet.utils.MedicalRecordUtils;
@@ -18,7 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class BusinessService implements IBusinessService {
@@ -29,13 +27,16 @@ public class BusinessService implements IBusinessService {
     private final IFireStationDAO fireStationDAO;
     private final IMedicalRecordDAO medicalRecordDAO;
 
-    // TODO import medical record service pour le findby
+    @Autowired
+    private final IMedicalRecordService medicalRecordService;
 
     @Autowired
-    public BusinessService(IPersonDAO personDAO, IFireStationDAO fireStationDAO, IMedicalRecordDAO medicalRecordDAO) {
+    public BusinessService(IPersonDAO personDAO, IFireStationDAO fireStationDAO,
+                           IMedicalRecordDAO medicalRecordDAO, IMedicalRecordService medicalRecordService) {
         this.personDAO = personDAO;
         this.fireStationDAO = fireStationDAO;
         this.medicalRecordDAO = medicalRecordDAO;
+        this.medicalRecordService = medicalRecordService;
     }
 
     @Override
@@ -54,7 +55,7 @@ public class BusinessService implements IBusinessService {
 
         for (Person person : personList) {
             personListingForFireStation.getPersonsListForFireStation().add(PersonConverter.convertToLightweight(person));
-            MedicalRecord medicalRecord = medicalRecordDAO.findById(person.getFirstName(), person.getLastName());
+            MedicalRecord medicalRecord = medicalRecordDAO.findByFirstAndLastNames(person.getFirstName(), person.getLastName());
             if (MedicalRecordUtils.isAChild(medicalRecord)) {
                 nbOfChildren++;
             } else {
@@ -77,7 +78,9 @@ public class BusinessService implements IBusinessService {
         List<Child> children = new ArrayList<>();
 
         for (Person person : householdList) {
-            MedicalRecord medicalRecord = medicalRecordDAO.findByIdOrThrow(person.getFirstName(), person.getLastName());
+            MedicalRecord medicalRecord =
+                    medicalRecordService.findByFirstAndLastNamesOrThrow(person.getFirstName(),
+                            person.getLastName());
             int age = MedicalRecordUtils.getPersonAge(medicalRecord);
             if (MedicalRecordUtils.isAChild(age)) {
                 children.add(PersonConverter.convertToChild(person, age, householdList));
@@ -105,12 +108,13 @@ public class BusinessService implements IBusinessService {
         List<PersonWithMedicalRecord> personWithMedicalRecordList = personDAO.findByAddress(address)
                 .stream()
                 .map(person -> {
-                    MedicalRecord medicalRecord = medicalRecordDAO.findByIdOrThrow(person.getFirstName(), person.getLastName());
+                    MedicalRecord medicalRecord =
+                            medicalRecordService.findByFirstAndLastNamesOrThrow(person.getFirstName(), person.getLastName());
                     return PersonConverter.convertToPersonWithMedicalRecord(person, medicalRecord);
                 })
                 .collect(Collectors.toList());
 
-        Optional<Integer> stationNumber = fireStationDAO.getStationForAddress(address);
+        Optional<Integer> stationNumber = fireStationDAO.findByAddressAndMapToStation(address);
         if (!(stationNumber.isPresent())) {
             throw new FireStationNotFoundException();
         }
@@ -129,8 +133,8 @@ public class BusinessService implements IBusinessService {
 
     @Override
     public PersonInfo getPersonInfo(String firstName, String lastName) {
-        MedicalRecord medicalRecord = medicalRecordDAO.findByIdOrThrow(firstName, lastName);
-        return PersonConverter.convertToPersonInfo(personDAO.findById(firstName, lastName), medicalRecord);
+        MedicalRecord medicalRecord = medicalRecordService.findByFirstAndLastNamesOrThrow(firstName, lastName);
+        return PersonConverter.convertToPersonInfo(personDAO.findByFirstAndLastNames(firstName, lastName), medicalRecord);
     }
 
     @Override
@@ -153,7 +157,8 @@ public class BusinessService implements IBusinessService {
         addresses.forEach(address -> {
             List<PersonWithMedicalRecord> personList =
                     personDAO.findByAddress(address).stream().map(person -> {
-                        MedicalRecord medicalRecord = medicalRecordDAO.findByIdOrThrow(person.getFirstName(), person.getLastName());
+                        MedicalRecord medicalRecord =
+                                medicalRecordService.findByFirstAndLastNamesOrThrow(person.getFirstName(), person.getLastName());
                         return PersonConverter.convertToPersonWithMedicalRecord(person, medicalRecord);
                     }).collect(Collectors.toList());
             addressPersonMap.put(address, personList);

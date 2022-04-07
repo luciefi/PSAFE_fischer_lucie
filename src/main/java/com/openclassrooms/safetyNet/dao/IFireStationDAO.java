@@ -10,13 +10,11 @@ public interface IFireStationDAO {
 
     FireStation save(FireStation newFireStation);
 
-    FireStation findById(String address);
+    FireStation findByAddress(String address);
 
-    void deleteById(String address);
+    void deleteByAddress(String address);
 
     List<String> getAddressesForStation(int stationNumber);
 
-    // TODO renommer les dao id -> firstName, lastName
-    // TODO renommer findByAddressAndMapStation
-    Optional<Integer> getStationForAddress(String address);
+    Optional<Integer> findByAddressAndMapToStation(String address);
 }
