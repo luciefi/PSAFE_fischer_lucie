@@ -2,9 +2,7 @@ package com.openclassrooms.safetyNet.IntegrationTest;
 
 import com.openclassrooms.safetyNet.DataSource;
 import com.openclassrooms.safetyNet.model.Person;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,6 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class PersonIntegrationTest {
 
     @Autowired
@@ -31,12 +30,8 @@ class PersonIntegrationTest {
     @Autowired
     DataSource dataSource;
 
-    @BeforeEach
-    void setUp() {
-        dataSource.initDataSourceBeforeTest();
-    }
-
     @Test
+    @Order(1)
     void getPersonsTest() throws Exception {
         mockMvc.perform(get("/persons"))
                 .andExpect(status().isOk())
@@ -44,6 +39,7 @@ class PersonIntegrationTest {
     }
 
     @Test
+    @Order(2)
     void addPersonTest() throws Exception {
         mockMvc.perform(post("/persons").contentType(MediaType.APPLICATION_JSON)
                         .content("{\n" +
@@ -63,6 +59,7 @@ class PersonIntegrationTest {
     }
 
     @Test
+    @Order(3)
     void updatePersonTest() throws Exception {
         mockMvc.perform(put("/persons").contentType(MediaType.APPLICATION_JSON)
                         .content("{\n" +
@@ -87,8 +84,9 @@ class PersonIntegrationTest {
     }
 
     @Test
+    @Order(4)
     void deletePersonTest() throws Exception {
-        mockMvc.perform(delete("/persons/John_Boyd")).andExpect(status().isNoContent());
+        mockMvc.perform(delete("/persons/John_Boyd")).andExpect(status().isOk());
         List<Person> john = dataSource.getPersons().stream()
                 .filter(person -> person.getFirstName().equals("John") && person.getLastName().equals("Boyd"))
                 .collect(Collectors.toList());

@@ -35,7 +35,7 @@ public class PersonDAOTest {
         persons.add(new Person());
         when(dataSource.getPersons()).thenReturn(persons);
 
-        assertEquals(1, personDAO.findAll().size());
+        assertEquals(persons, personDAO.findAll());
         verify(dataSource, Mockito.times(1)).getPersons();
     }
 
@@ -57,14 +57,14 @@ public class PersonDAOTest {
         totoTest.setLastName("test");
         persons.add(totoTest);
         when(dataSource.getPersons()).thenReturn(persons);
-        assertNotNull(personDAO.findById("toto", "test"));
+        assertNotNull(personDAO.findByFirstAndLastNames("toto", "test"));
         verify(dataSource, Mockito.times(1)).getPersons();
     }
 
     @Test
     void findUnknownPersonByNameTest() {
         when(dataSource.getPersons()).thenReturn(new ArrayList<>());
-        assertNull(personDAO.findById("toto", "test"));
+        assertNull(personDAO.findByFirstAndLastNames("toto", "test"));
         verify(dataSource, Mockito.times(1)).getPersons();
     }
 
@@ -76,7 +76,7 @@ public class PersonDAOTest {
         totoTest.setLastName("test");
         persons.add(totoTest);
         when(dataSource.getPersons()).thenReturn(persons);
-        assertNull(personDAO.findById("toto", "test"));
+        assertNull(personDAO.findByFirstAndLastNames("toto", "test"));
         verify(dataSource, Mockito.times(1)).getPersons();
     }
 
@@ -88,7 +88,7 @@ public class PersonDAOTest {
         totoTest.setLastName("testTest");
         persons.add(totoTest);
         when(dataSource.getPersons()).thenReturn(persons);
-        assertNull(personDAO.findById("toto", "test"));
+        assertNull(personDAO.findByFirstAndLastNames("toto", "test"));
         verify(dataSource, Mockito.times(1)).getPersons();
     }
 
@@ -100,7 +100,7 @@ public class PersonDAOTest {
         totoTest.setLastName("test");
         persons.add(totoTest);
         when(dataSource.getPersons()).thenReturn(persons);
-        personDAO.deleteById("toto", "test");
+        personDAO.deleteByFirstAndLastNames("toto", "test");
         assertEquals(0, persons.size());
     }
 

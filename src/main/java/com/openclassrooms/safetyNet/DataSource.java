@@ -35,9 +35,4 @@ public class DataSource {
             e.printStackTrace();
         }
     }
-
-    @ConditionalOnNotWebApplication()
-    public void initDataSourceBeforeTest() {
-        initDataSource();
-    }
 }

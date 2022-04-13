@@ -1,9 +1,6 @@
 package com.openclassrooms.safetyNet.IntegrationTest.controller;
 
-import com.openclassrooms.safetyNet.exceptions.InvalidFormattedFullNameException;
-import com.openclassrooms.safetyNet.exceptions.MedicalRecordAlreadyExistsException;
-import com.openclassrooms.safetyNet.exceptions.PersonAlreadyExistsException;
-import com.openclassrooms.safetyNet.exceptions.PersonNotFoundException;
+import com.openclassrooms.safetyNet.exceptions.*;
 import com.openclassrooms.safetyNet.model.MedicalRecord;
 import com.openclassrooms.safetyNet.service.MedicalRecordService;
 import org.junit.jupiter.api.Test;
@@ -53,7 +50,6 @@ class MedicalRecordControllerTest {
     @Test
     void addMedicalRecordTest() throws Exception {
         when(medicalRecordService.save(any(MedicalRecord.class))).thenReturn(new MedicalRecord());
-
         mockMvc.perform(post("/medicalRecord/").contentType(MediaType.APPLICATION_JSON)
                         .content("{\n" +
                                 "    \"firstName\": \"John3\",\n" +
@@ -69,7 +65,6 @@ class MedicalRecordControllerTest {
     @Test
     void addAlreadyKnownMedicalRecordTest() throws Exception {
         when(medicalRecordService.save(any(MedicalRecord.class))).thenThrow(new MedicalRecordAlreadyExistsException());
-
         mockMvc.perform(post("/medicalRecord").contentType(MediaType.APPLICATION_JSON)
                         .content("{\n" +
                                 "    \"firstName\": \"John\",\n" +
@@ -92,7 +87,8 @@ class MedicalRecordControllerTest {
                                 "    \"medications\":\"\", \n" +
                                 "    \"allergies\":\"\"" +
                                 "}"))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isBadRequest());
+        verify(medicalRecordService, Mockito.times(0)).save(any(MedicalRecord.class));
     }
 
     @Test
@@ -112,7 +108,7 @@ class MedicalRecordControllerTest {
 
     @Test
     void updateUnknownMedicalRecordTest() throws Exception {
-        when(medicalRecordService.update(any(MedicalRecord.class))).thenThrow(new PersonAlreadyExistsException());
+        when(medicalRecordService.update(any(MedicalRecord.class))).thenThrow(new MedicalRecordNotFoundException());
         mockMvc.perform(put("/medicalRecord").contentType(MediaType.APPLICATION_JSON)
                         .content("{\n" +
                                 "    \"firstName\": \"Jane\",\n" +
@@ -121,7 +117,7 @@ class MedicalRecordControllerTest {
                                 "    \"medications\":[\"aznol:350mg\", \"hydrapermazol:100mg\"], \n" +
                                 "    \"allergies\":[\"nillacilan\"]" +
                                 "}"))
-                .andExpect(status().isConflict());
+                .andExpect(status().isNotFound());
         verify(medicalRecordService, Mockito.times(1)).update(any(MedicalRecord.class));
     }
 
@@ -136,18 +132,19 @@ class MedicalRecordControllerTest {
                                 "    \"medications\":\"\", \n" +
                                 "    \"allergies\":\"\"" +
                                 "}"))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isBadRequest());
+        verify(medicalRecordService, Mockito.times(0)).update(any(MedicalRecord.class));
     }
 
     @Test
     void deleteMedicalRecordTest() throws Exception {
-        mockMvc.perform(delete("/medicalRecord/John_Boyd")).andExpect(status().isNoContent());
+        mockMvc.perform(delete("/medicalRecord/John_Boyd")).andExpect(status().isOk());
         verify(medicalRecordService, Mockito.times(1)).delete(anyString());
     }
 
     @Test
     void deleteUnknownMedicalRecordTest() throws Exception {
-        Mockito.doThrow(new PersonNotFoundException()).when(medicalRecordService).delete(anyString());
+        Mockito.doThrow(new MedicalRecordNotFoundException()).when(medicalRecordService).delete(anyString());
         mockMvc.perform(delete("/medicalRecord/Jane_Boyd")).andExpect(status().isNotFound());
         verify(medicalRecordService, Mockito.times(1)).delete(anyString());
     }
@@ -155,14 +152,7 @@ class MedicalRecordControllerTest {
     @Test
     void deleteInvalidNameTest() throws Exception {
         Mockito.doThrow(new InvalidFormattedFullNameException()).when(medicalRecordService).delete(anyString());
-        mockMvc.perform(delete("/medicalRecord/Jane_Boyd")).andExpect(status().isBadRequest());
-        verify(medicalRecordService, Mockito.times(1)).delete(anyString());
-    }
-
-    @Test
-    void deleteInternalErrorTest() throws Exception {
-        Mockito.doThrow(new InternalError()).when(medicalRecordService).delete(anyString());
-        mockMvc.perform(delete("/medicalRecord/Jane_Boyd")).andExpect(status().isInternalServerError());
+        mockMvc.perform(delete("/medicalRecord/JaneBoyd")).andExpect(status().isBadRequest());
         verify(medicalRecordService, Mockito.times(1)).delete(anyString());
     }
 }

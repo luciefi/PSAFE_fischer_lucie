@@ -1,22 +1,21 @@
 package com.openclassrooms.safetyNet.service;
 
-import com.openclassrooms.safetyNet.model.Child;
-import com.openclassrooms.safetyNet.model.PersonInfo;
-import com.openclassrooms.safetyNet.model.PersonListingForAddress;
-import com.openclassrooms.safetyNet.model.PersonListingForFireStation;
+import com.openclassrooms.safetyNet.dto.*;
 
 import java.util.List;
 
 public interface IBusinessService {
-    PersonListingForFireStation getPersonListingForFireStation(int stationNumber);
+    PersonListingForFireStationDTO getPersonListingForFireStation(int stationNumber);
 
-    List<Child> getChildren(String address);
+    List<ChildDTO> getChildren(String address);
 
     List<String> getPhoneNumbers(int firestation);
 
-    PersonListingForAddress getPersonListingForAddress(String address);
+    PersonListingForAddressDTO getPersonListingForAddress(String address);
 
     List<String> getEmails(String city);
 
-    PersonInfo getPersonInfo(String firstName, String lastName);
+    PersonInfoDTO getPersonInfo(String firstName, String lastName);
+
+    List<StationWithAddressListingDTO> getPersonsForListOfStations(List<Integer> stations);
 }

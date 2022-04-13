@@ -9,9 +9,9 @@ public interface IPersonDAO {
 
     Person save(Person newPerson);
 
-    Person findById(String firstName, String lastName);
+    Person findByFirstAndLastNames(String firstName, String lastName);
 
-    void deleteById(String firstName, String lastName);
+    void deleteByFirstAndLastNames(String firstName, String lastName);
 
     List<Person> findByAddresses(List<String> addresses);
 

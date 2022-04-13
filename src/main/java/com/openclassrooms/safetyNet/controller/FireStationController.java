@@ -42,6 +42,6 @@ public class FireStationController {
     @DeleteMapping("/firestations/{address}")
     public ResponseEntity<?> deleteAddressStationMapping(@PathVariable("address") final String address) {
         fireStationService.delete(address);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 }

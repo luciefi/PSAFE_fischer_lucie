@@ -1,7 +1,6 @@
 package com.openclassrooms.safetyNet.service;
 
 import com.openclassrooms.safetyNet.dao.IMedicalRecordDAO;
-import com.openclassrooms.safetyNet.exceptions.InvalidFormattedFullNameException;
 import com.openclassrooms.safetyNet.exceptions.MedicalRecordAlreadyExistsException;
 import com.openclassrooms.safetyNet.exceptions.MedicalRecordNotFoundException;
 import com.openclassrooms.safetyNet.model.MedicalRecord;
@@ -44,8 +43,9 @@ public class MedicalRecordService implements IMedicalRecordService {
 
     @Override
     public MedicalRecord findByName(String fullName) {
+        logger.debug("Looking for medical record with name {}", fullName);
         String[] nameArray = PersonConverter.convertToNameArray(fullName);
-        return medicalRecordDAO.findById(nameArray[0], nameArray[1]);
+        return medicalRecordDAO.findByFirstAndLastNames(nameArray[0], nameArray[1]);
     }
 
     @Override
@@ -73,6 +73,18 @@ public class MedicalRecordService implements IMedicalRecordService {
             throw new MedicalRecordNotFoundException();
         }
         String[] nameArray = PersonConverter.convertToNameArray(fullName);
-        medicalRecordDAO.deleteById(nameArray[0], nameArray[1]);
+        medicalRecordDAO.deleteByFirstAndLastNames(nameArray[0], nameArray[1]);
+    }
+
+
+    @Override
+    public MedicalRecord findByFirstAndLastNamesOrThrow(String firstName, String lastName) {
+        logger.debug("Looking for medical record with name {} {}", firstName, lastName);
+        MedicalRecord medicalRecord = medicalRecordDAO.findByFirstAndLastNames(firstName, lastName);
+        if (medicalRecord == null) {
+            logger.error("Medical record with name {} {} not found.", firstName, lastName);
+            throw new MedicalRecordNotFoundException();
+        }
+        return medicalRecord;
     }
 }

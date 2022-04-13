@@ -1,11 +1,11 @@
-package com.openclassrooms.safetyNet.model;
+package com.openclassrooms.safetyNet.dto;
 
 import lombok.Data;
 
 @Data
-public class LightweightPerson {
+public class LightweightPersonDTO {
 
-    public LightweightPerson(String firstName, String lastName, String address, String phone) {
+    public LightweightPersonDTO(String firstName, String lastName, String address, String phone) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;

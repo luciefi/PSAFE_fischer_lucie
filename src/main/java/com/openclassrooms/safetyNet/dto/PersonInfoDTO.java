@@ -1,4 +1,4 @@
-package com.openclassrooms.safetyNet.model;
+package com.openclassrooms.safetyNet.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PersonInfo {
+public class PersonInfoDTO {
 
     private String firstName;
 

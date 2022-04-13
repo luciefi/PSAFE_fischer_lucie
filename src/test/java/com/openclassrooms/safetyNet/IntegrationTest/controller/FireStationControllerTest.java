@@ -1,11 +1,11 @@
 package com.openclassrooms.safetyNet.IntegrationTest.controller;
 
 import com.openclassrooms.safetyNet.exceptions.FireStationAlreadyExistsException;
+import com.openclassrooms.safetyNet.exceptions.FireStationNotFoundException;
 import com.openclassrooms.safetyNet.exceptions.InvalidFormattedFullNameException;
 import com.openclassrooms.safetyNet.exceptions.PersonNotFoundException;
 import com.openclassrooms.safetyNet.model.FireStation;
 import com.openclassrooms.safetyNet.service.FireStationService;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,6 +82,7 @@ class FireStationControllerTest {
                                 "    \"station\": \"\"\n" +
                                 "}"))
                 .andExpect(status().isBadRequest());
+        verify(fireStationService, Mockito.times(0)).save(any(FireStation.class));
     }
 
     @Test
@@ -98,13 +99,13 @@ class FireStationControllerTest {
 
     @Test
     void updateUnknownFireStationTest() throws Exception {
-        when(fireStationService.update(any(FireStation.class))).thenThrow(new FireStationAlreadyExistsException());
+        when(fireStationService.update(any(FireStation.class))).thenThrow(new FireStationNotFoundException());
         mockMvc.perform(put("/firestations").contentType(MediaType.APPLICATION_JSON)
                         .content("{\n" +
                                 "    \"address\": \"1 Culver St\",\n" +
                                 "    \"station\": \"1\"\n" +
                                 "}"))
-                .andExpect(status().isConflict());
+                .andExpect(status().isNotFound());
         verify(fireStationService, Mockito.times(1)).update(any(FireStation.class));
     }
 
@@ -117,11 +118,12 @@ class FireStationControllerTest {
                                 "    \"station\": \"\"\n" +
                                 "}"))
                 .andExpect(status().isBadRequest());
+        verify(fireStationService, Mockito.times(0)).update(any(FireStation.class));
     }
 
     @Test
     void deleteFireStationTest() throws Exception {
-        mockMvc.perform(delete("/firestations/my_address")).andExpect(status().isNoContent());
+        mockMvc.perform(delete("/firestations/my_address")).andExpect(status().isOk());
         verify(fireStationService, Mockito.times(1)).delete(anyString());
     }
 
@@ -129,20 +131,6 @@ class FireStationControllerTest {
     void deleteUnknownFireStationTest() throws Exception {
         Mockito.doThrow(new PersonNotFoundException()).when(fireStationService).delete(anyString());
         mockMvc.perform(delete("/firestations/my_address")).andExpect(status().isNotFound());
-        verify(fireStationService, Mockito.times(1)).delete(anyString());
-    }
-
-    @Test
-    void deleteInvalidFireStationTest() throws Exception {
-        Mockito.doThrow(new InvalidFormattedFullNameException()).when(fireStationService).delete(anyString());
-        mockMvc.perform(delete("/firestations/my_address")).andExpect(status().isBadRequest());
-        verify(fireStationService, Mockito.times(1)).delete(anyString());
-    }
-
-    @Test
-    void deleteInternalErrorTest() throws Exception {
-        Mockito.doThrow(new InternalError()).when(fireStationService).delete(anyString());
-        mockMvc.perform(delete("/firestations/my_address")).andExpect(status().isInternalServerError());
         verify(fireStationService, Mockito.times(1)).delete(anyString());
     }
 }

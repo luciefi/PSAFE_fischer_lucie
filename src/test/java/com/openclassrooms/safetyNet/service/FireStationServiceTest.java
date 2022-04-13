@@ -40,10 +40,10 @@ public class FireStationServiceTest {
         FireStation fireStation = new FireStation();
         fireStation.setStation(1);
         fireStation.setAddress("1 Culver St");
-        when(fireStationDAO.findById(anyString())).thenReturn(new FireStation());
+        when(fireStationDAO.findByAddress(anyString())).thenReturn(new FireStation());
         assertThrows(FireStationAlreadyExistsException.class, () -> fireStationService.save(fireStation));
         verify(fireStationDAO, Mockito.times(0)).save(any(FireStation.class));
-        verify(fireStationDAO, Mockito.times(1)).findById(anyString());
+        verify(fireStationDAO, Mockito.times(1)).findByAddress(anyString());
     }
 
     @Test
@@ -52,60 +52,64 @@ public class FireStationServiceTest {
         fireStation.setStation(1);
         fireStation.setAddress("1 Culver St");
         when(fireStationDAO.save(any(FireStation.class))).thenReturn(new FireStation());
-        when(fireStationDAO.findById(anyString())).thenReturn(null);
+        when(fireStationDAO.findByAddress(anyString())).thenReturn(null);
         fireStationService.save(fireStation);
-        verify(fireStationDAO, Mockito.times(1)).findById(anyString());
+        verify(fireStationDAO, Mockito.times(1)).findByAddress(anyString());
         verify(fireStationDAO, Mockito.times(1)).save(any(FireStation.class));
     }
 
     @Test
     public void findKnownFireStationMappingByAddressTest() {
-        when(fireStationDAO.findById(anyString())).thenReturn(new FireStation());
+        when(fireStationDAO.findByAddress(anyString())).thenReturn(new FireStation());
         assertEquals(new FireStation(), fireStationService.findByAddress("toto_test"));
-        verify(fireStationDAO, Mockito.times(1)).findById(anyString());
+        verify(fireStationDAO, Mockito.times(1)).findByAddress(anyString());
     }
 
     @Test
     public void findUnknownFireStationMappingByAddressTest() {
-        when(fireStationDAO.findById(anyString())).thenReturn(null);
+        when(fireStationDAO.findByAddress(anyString())).thenReturn(null);
         assertNull(fireStationService.findByAddress("toto_test"));
-        verify(fireStationDAO, Mockito.times(1)).findById(anyString());
+        verify(fireStationDAO, Mockito.times(1)).findByAddress(anyString());
     }
 
     @Test
     public void updateKnownFireStationMappingTest() {
         FireStation fireStation = new FireStation();
-        fireStation.setStation(1);
+        fireStation.setStation(3);
         fireStation.setAddress("1 Culver St");
-        when(fireStationDAO.findById(anyString())).thenReturn(new FireStation());
-        assertEquals(fireStation, fireStationService.update(fireStation));
-        verify(fireStationDAO, Mockito.times(1)).findById(anyString());
+
+        FireStation updatedFireStation = new FireStation();
+        updatedFireStation.setStation(1);
+        updatedFireStation.setAddress("1 Culver St");
+        when(fireStationDAO.findByAddress(anyString())).thenReturn(fireStation);
+
+        assertEquals(fireStation, fireStationService.update(updatedFireStation));
+        verify(fireStationDAO, Mockito.times(1)).findByAddress(anyString());
     }
 
     @Test
     public void updateUnknownFireStationMappingTest() {
-        when(fireStationDAO.findById(anyString())).thenReturn(null);
+        when(fireStationDAO.findByAddress(anyString())).thenReturn(null);
         FireStation fireStation = new FireStation();
         fireStation.setStation(1);
         fireStation.setAddress("1 Culver St");
-
         assertThrows(FireStationNotFoundException.class, () -> fireStationService.update(fireStation));
-        verify(fireStationDAO, Mockito.times(1)).findById(anyString());
+        verify(fireStationDAO, Mockito.times(1)).findByAddress(anyString());
     }
 
     @Test
     public void deleteKnownFireStationMappingTest() {
-        when(fireStationDAO.findById(anyString())).thenReturn(new FireStation());
+        when(fireStationDAO.findByAddress(anyString())).thenReturn(new FireStation());
         fireStationService.delete("toto_test");
-        verify(fireStationDAO, Mockito.times(1)).findById(anyString());
-        verify(fireStationDAO, Mockito.times(1)).deleteById(anyString());
+        verify(fireStationDAO, Mockito.times(1)).findByAddress(anyString());
+        verify(fireStationDAO, Mockito.times(1)).deleteByAddress(anyString());
     }
 
     @Test
     public void deleteUnknownFireStationMappingTest() {
-        when(fireStationDAO.findById(anyString())).thenReturn(null);
+        when(fireStationDAO.findByAddress(anyString())).thenReturn(null);
         assertThrows(FireStationNotFoundException.class, () -> fireStationService.delete("toto_test"));
-        verify(fireStationDAO, Mockito.times(1)).findById(anyString());
-        verify(fireStationDAO, Mockito.times(0)).deleteById(anyString());
+        verify(fireStationDAO, Mockito.times(1)).findByAddress(anyString());
+        verify(fireStationDAO, Mockito.times(0)).deleteByAddress(anyString());
     }
 }

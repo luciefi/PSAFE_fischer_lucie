@@ -1,7 +1,6 @@
 package com.openclassrooms.safetyNet.service;
 
 import com.openclassrooms.safetyNet.dao.IPersonDAO;
-import com.openclassrooms.safetyNet.exceptions.InvalidFormattedFullNameException;
 import com.openclassrooms.safetyNet.exceptions.PersonAlreadyExistsException;
 import com.openclassrooms.safetyNet.exceptions.PersonNotFoundException;
 import com.openclassrooms.safetyNet.model.Person;
@@ -45,8 +44,9 @@ public class PersonService implements IPersonService {
 
     @Override
     public Person findByName(String fullName) {
+        logger.debug("Looking for person with name {}", fullName);
         String[] nameArray = PersonConverter.convertToNameArray(fullName);
-        return personDAO.findById(nameArray[0], nameArray[1]);
+        return personDAO.findByFirstAndLastNames(nameArray[0], nameArray[1]);
     }
 
     @Override
@@ -77,7 +77,6 @@ public class PersonService implements IPersonService {
             throw new PersonNotFoundException();
         }
         String[] nameArray = PersonConverter.convertToNameArray(fullName);
-        personDAO.deleteById(nameArray[0], nameArray[1]);
+        personDAO.deleteByFirstAndLastNames(nameArray[0], nameArray[1]);
     }
-
 }

@@ -33,7 +33,7 @@ public class FireStationDAO implements IFireStationDAO {
     }
 
     @Override
-    public FireStation findById(String address) {
+    public FireStation findByAddress(String address) {
         List<FireStation> fireStationList = dataSource.getFirestations();
         List<FireStation> foundFireStationList = fireStationList.stream().filter(fireStation -> fireStation.getAddress().equals(address)).collect(Collectors.toList());
         if (foundFireStationList.size() > 0) {
@@ -43,8 +43,8 @@ public class FireStationDAO implements IFireStationDAO {
     }
 
     @Override
-    public void deleteById(String address) {
-        dataSource.getFirestations().remove(findById(address));
+    public void deleteByAddress(String address) {
+        dataSource.getFirestations().remove(findByAddress(address));
     }
 
     @Override
@@ -57,7 +57,7 @@ public class FireStationDAO implements IFireStationDAO {
     }
 
     @Override
-    public Optional<Integer> getStationForAddress(String address) {
+    public Optional<Integer> findByAddressAndMapToStation(String address) {
         return findAll()
                 .stream()
                 .filter(fireStation -> Objects.equals(fireStation.getAddress(), address))

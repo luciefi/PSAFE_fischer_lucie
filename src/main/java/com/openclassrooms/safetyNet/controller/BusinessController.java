@@ -1,9 +1,6 @@
 package com.openclassrooms.safetyNet.controller;
 
-import com.openclassrooms.safetyNet.model.Child;
-import com.openclassrooms.safetyNet.model.PersonInfo;
-import com.openclassrooms.safetyNet.model.PersonListingForAddress;
-import com.openclassrooms.safetyNet.model.PersonListingForFireStation;
+import com.openclassrooms.safetyNet.dto.*;
 import com.openclassrooms.safetyNet.service.IBusinessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,46 +22,45 @@ public class BusinessController {
     }
 
     @GetMapping("/firestation")
-    public ResponseEntity<?> getPersonsForGivenStation(
-            @RequestParam(value = "stationNumber") int stationNumber
-    ) {
-        PersonListingForFireStation personListingForFireStation = businessService.getPersonListingForFireStation(stationNumber);
+    public ResponseEntity<?> getPersonsForGivenStation(@RequestParam int stationNumber) {
+        PersonListingForFireStationDTO personListingForFireStation = businessService.getPersonListingForFireStation(stationNumber);
         return new ResponseEntity<>(personListingForFireStation, HttpStatus.OK);
     }
 
     @GetMapping("/childAlert")
-    public ResponseEntity<?> getChildrenForGivenAddress(
-            @RequestParam(value = "address") String address
-    ) {
-        List<Child> children = businessService.getChildren(address);
+    public ResponseEntity<?> getChildrenForGivenAddress(@RequestParam String address) {
+        List<ChildDTO> children = businessService.getChildren(address);
         return new ResponseEntity<>(children, HttpStatus.OK);
     }
 
     @GetMapping("/phoneAlert")
-    public ResponseEntity<?> getPhoneNumbersForStation(
-            @RequestParam(value = "firestation") int firestation
-    ) {
+    public ResponseEntity<?> getPhoneNumbersForStation(@RequestParam int firestation) {
         List<String> phoneNumbers = businessService.getPhoneNumbers(firestation);
         return new ResponseEntity<>(phoneNumbers, HttpStatus.OK);
     }
 
     @GetMapping("/fire")
-    public ResponseEntity<?> getPeopleAndStationForAddress(@RequestParam(value = "address") String address) {
-        PersonListingForAddress personListingForAddress = businessService.getPersonListingForAddress(address);
+    public ResponseEntity<?> getPeopleAndStationForAddress(@RequestParam String address) {
+        PersonListingForAddressDTO personListingForAddress = businessService.getPersonListingForAddress(address);
         return new ResponseEntity<>(personListingForAddress, HttpStatus.OK);
     }
 
     @GetMapping("/communityEmail")
-    public ResponseEntity<?> getEmailAddressForCity(@RequestParam(value = "city") String city) {
+    public ResponseEntity<?> getEmailAddressForCity(@RequestParam String city) {
         List<String> emails = businessService.getEmails(city);
         return new ResponseEntity<>(emails, HttpStatus.OK);
     }
 
     @GetMapping("/personInfo")
-    public ResponseEntity<?> getPersonInfo(@RequestParam(value = "firstName") String firstName,
-                                           @RequestParam(value = "lastName") String lastName) {
-        PersonInfo personInfo = businessService.getPersonInfo(firstName, lastName);
+    public ResponseEntity<?> getPersonInfo(@RequestParam String firstName, @RequestParam String lastName) {
+        PersonInfoDTO personInfo = businessService.getPersonInfo(firstName, lastName);
         return new ResponseEntity<>(personInfo, HttpStatus.OK);
     }
-}
 
+    @GetMapping("/flood/stations")
+    public ResponseEntity<?> getPersonsForListOfStations(@RequestParam List<Integer> stations) {
+        List<StationWithAddressListingDTO> stationWithAddressListing =
+                businessService.getPersonsForListOfStations(stations);
+        return new ResponseEntity<>(stationWithAddressListing, HttpStatus.OK);
+    }
+}

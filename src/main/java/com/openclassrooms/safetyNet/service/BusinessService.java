@@ -1,10 +1,10 @@
 package com.openclassrooms.safetyNet.service;
 
+import com.openclassrooms.safetyNet.dto.*;
 import com.openclassrooms.safetyNet.dao.IFireStationDAO;
 import com.openclassrooms.safetyNet.dao.IMedicalRecordDAO;
 import com.openclassrooms.safetyNet.dao.IPersonDAO;
 import com.openclassrooms.safetyNet.exceptions.FireStationNotFoundException;
-import com.openclassrooms.safetyNet.exceptions.MedicalRecordNotFoundException;
 import com.openclassrooms.safetyNet.model.*;
 import com.openclassrooms.safetyNet.utils.PersonConverter;
 import com.openclassrooms.safetyNet.utils.MedicalRecordUtils;
@@ -17,32 +17,36 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class BusinessService implements IBusinessService {
 
-    private static final Logger logger = LogManager.getLogger(FireStationService.class);
+    private static final Logger logger = LogManager.getLogger(BusinessService.class);
 
     private final IPersonDAO personDAO;
     private final IFireStationDAO fireStationDAO;
     private final IMedicalRecordDAO medicalRecordDAO;
 
     @Autowired
-    public BusinessService(IPersonDAO personDAO, IFireStationDAO fireStationDAO, IMedicalRecordDAO medicalRecordDAO) {
+    private final IMedicalRecordService medicalRecordService;
+
+    @Autowired
+    public BusinessService(IPersonDAO personDAO, IFireStationDAO fireStationDAO,
+                           IMedicalRecordDAO medicalRecordDAO, IMedicalRecordService medicalRecordService) {
         this.personDAO = personDAO;
         this.fireStationDAO = fireStationDAO;
         this.medicalRecordDAO = medicalRecordDAO;
+        this.medicalRecordService = medicalRecordService;
     }
 
     @Override
-    public PersonListingForFireStation getPersonListingForFireStation(int stationNumber) {
+    public PersonListingForFireStationDTO getPersonListingForFireStation(int stationNumber) {
 
         logger.info("Fetching every person for fire station {}", stationNumber);
 
         List<String> addressesForStation = fireStationDAO.getAddressesForStation(stationNumber);
 
-        PersonListingForFireStation personListingForFireStation = new PersonListingForFireStation();
+        PersonListingForFireStationDTO personListingForFireStation = new PersonListingForFireStationDTO();
 
         int nbOfAdult = 0;
         int nbOfChildren = 0;
@@ -51,7 +55,7 @@ public class BusinessService implements IBusinessService {
 
         for (Person person : personList) {
             personListingForFireStation.getPersonsListForFireStation().add(PersonConverter.convertToLightweight(person));
-            MedicalRecord medicalRecord = medicalRecordDAO.findById(person.getFirstName(), person.getLastName());
+            MedicalRecord medicalRecord = medicalRecordDAO.findByFirstAndLastNames(person.getFirstName(), person.getLastName());
             if (MedicalRecordUtils.isAChild(medicalRecord)) {
                 nbOfChildren++;
             } else {
@@ -66,15 +70,17 @@ public class BusinessService implements IBusinessService {
     }
 
     @Override
-    public List<Child> getChildren(String address) {
+    public List<ChildDTO> getChildren(String address) {
         logger.info("Fetching every child for address {}", address);
 
         List<Person> householdList = personDAO.findByAddress(address);
 
-        List<Child> children = new ArrayList<>();
+        List<ChildDTO> children = new ArrayList<>();
 
         for (Person person : householdList) {
-            MedicalRecord medicalRecord = medicalRecordDAO.findByIdOrThrow(person.getFirstName(), person.getLastName());
+            MedicalRecord medicalRecord =
+                    medicalRecordService.findByFirstAndLastNamesOrThrow(person.getFirstName(),
+                            person.getLastName());
             int age = MedicalRecordUtils.getPersonAge(medicalRecord);
             if (MedicalRecordUtils.isAChild(age)) {
                 children.add(PersonConverter.convertToChild(person, age, householdList));
@@ -96,23 +102,25 @@ public class BusinessService implements IBusinessService {
     }
 
     @Override
-    public PersonListingForAddress getPersonListingForAddress(String address) {
+    public PersonListingForAddressDTO getPersonListingForAddress(String address) {
         logger.info("Fetching every person and fire station number for address {}", address);
 
-        List<PersonWithMedicalRecord> personWithMedicalRecordList = personDAO.findByAddress(address)
+        List<PersonWithMedicalRecordDTO> personWithMedicalRecordList = personDAO.findByAddress(address)
                 .stream()
                 .map(person -> {
-                    MedicalRecord medicalRecord = medicalRecordDAO.findByIdOrThrow(person.getFirstName(), person.getLastName());
+                    MedicalRecord medicalRecord =
+                            medicalRecordService.findByFirstAndLastNamesOrThrow(person.getFirstName(), person.getLastName());
                     return PersonConverter.convertToPersonWithMedicalRecord(person, medicalRecord);
                 })
                 .collect(Collectors.toList());
 
-        Optional<Integer> stationNumber = fireStationDAO.getStationForAddress(address);
+        Optional<Integer> stationNumber = fireStationDAO.findByAddressAndMapToStation(address);
         if (!(stationNumber.isPresent())) {
+            logger.error("Fire station for address {}  not found.", address);
             throw new FireStationNotFoundException();
         }
 
-        PersonListingForAddress personListingForAddress = new PersonListingForAddress();
+        PersonListingForAddressDTO personListingForAddress = new PersonListingForAddressDTO();
         personListingForAddress.setFireStation(stationNumber.get());
         personListingForAddress.setPersonsListForAddress(personWithMedicalRecordList);
         return personListingForAddress;
@@ -120,13 +128,51 @@ public class BusinessService implements IBusinessService {
 
     @Override
     public List<String> getEmails(String city) {
+        logger.info("Fetching every email address for city {}", city);
+
         return personDAO.findByCity(city).stream().map(Person::getEmail).distinct().sorted()
                 .collect(Collectors.toList());
     }
 
     @Override
-    public PersonInfo getPersonInfo(String firstName, String lastName) {
-        MedicalRecord medicalRecord = medicalRecordDAO.findByIdOrThrow(firstName, lastName);
-        return PersonConverter.convertToPersonInfo(personDAO.findById(firstName, lastName), medicalRecord);
+    public PersonInfoDTO getPersonInfo(String firstName, String lastName) {
+        logger.info("Fetching person information for {} {}", firstName, lastName);
+
+        MedicalRecord medicalRecord = medicalRecordService.findByFirstAndLastNamesOrThrow(firstName, lastName);
+        return PersonConverter.convertToPersonInfo(personDAO.findByFirstAndLastNames(firstName, lastName), medicalRecord);
+    }
+
+    @Override
+    public List<StationWithAddressListingDTO> getPersonsForListOfStations(List<Integer> stations) {
+        logger.info("Fetching persons and addresses for stations {}", stations.toString());
+
+        List<StationWithAddressListingDTO> stationList = new ArrayList<>();
+        stations.forEach(station -> {
+            StationWithAddressListingDTO stationWithAddressAndPerson =
+                    new StationWithAddressListingDTO();
+            stationWithAddressAndPerson.setStation(station);
+            stationWithAddressAndPerson.setAddressListing(getPersonsForSingleStation(station));
+            stationList.add(stationWithAddressAndPerson);
+
+        });
+        return stationList;
+    }
+
+    private List<AddressWithPersonListingDTO> getPersonsForSingleStation(Integer station) {
+        List<String> addresses = fireStationDAO.getAddressesForStation(station);
+        List<AddressWithPersonListingDTO> addressPersonMap = new ArrayList<>();
+        addresses.forEach(address -> {
+            AddressWithPersonListingDTO addressWithPersonListing = new AddressWithPersonListingDTO();
+            addressWithPersonListing.setAddress(address);
+            List<PersonWithMedicalRecordDTO> personList =
+                    personDAO.findByAddress(address).stream().map(person -> {
+                        MedicalRecord medicalRecord =
+                                medicalRecordService.findByFirstAndLastNamesOrThrow(person.getFirstName(), person.getLastName());
+                        return PersonConverter.convertToPersonWithMedicalRecord(person, medicalRecord);
+                    }).collect(Collectors.toList());
+            addressWithPersonListing.setPersonListing(personList);
+            addressPersonMap.add(addressWithPersonListing);
+        });
+        return addressPersonMap;
     }
 }

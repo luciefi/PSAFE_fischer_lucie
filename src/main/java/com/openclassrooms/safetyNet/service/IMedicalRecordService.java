@@ -14,4 +14,6 @@ public interface IMedicalRecordService {
     void delete(String fullName);
 
     MedicalRecord update(MedicalRecord updatedPerson);
+
+    MedicalRecord findByFirstAndLastNamesOrThrow(String firstName, String lastName);
 }
