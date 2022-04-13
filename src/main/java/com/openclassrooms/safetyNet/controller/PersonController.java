@@ -43,6 +43,6 @@ public class PersonController {
     @DeleteMapping("/persons/{fullName}")
     public ResponseEntity<?> deletePerson(@PathVariable("fullName") final String fullName) {
         personService.delete(fullName);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 }

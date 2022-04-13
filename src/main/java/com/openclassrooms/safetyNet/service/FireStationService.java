@@ -41,6 +41,7 @@ public class FireStationService implements IFireStationService {
 
     @Override
     public FireStation findByAddress(String address) {
+        logger.debug("Looking for fire station with address {}", address);
         return fireStationDAO.findByAddress(address);
     }
 
@@ -68,5 +69,4 @@ public class FireStationService implements IFireStationService {
         }
         fireStationDAO.deleteByAddress(address);
     }
-
 }

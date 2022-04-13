@@ -43,6 +43,7 @@ public class MedicalRecordService implements IMedicalRecordService {
 
     @Override
     public MedicalRecord findByName(String fullName) {
+        logger.debug("Looking for medical record with name {}", fullName);
         String[] nameArray = PersonConverter.convertToNameArray(fullName);
         return medicalRecordDAO.findByFirstAndLastNames(nameArray[0], nameArray[1]);
     }
@@ -78,8 +79,10 @@ public class MedicalRecordService implements IMedicalRecordService {
 
     @Override
     public MedicalRecord findByFirstAndLastNamesOrThrow(String firstName, String lastName) {
+        logger.debug("Looking for medical record with name {} {}", firstName, lastName);
         MedicalRecord medicalRecord = medicalRecordDAO.findByFirstAndLastNames(firstName, lastName);
         if (medicalRecord == null) {
+            logger.error("Medical record with name {} {} not found.", firstName, lastName);
             throw new MedicalRecordNotFoundException();
         }
         return medicalRecord;

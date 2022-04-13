@@ -2,9 +2,7 @@ package com.openclassrooms.safetyNet.IntegrationTest;
 
 import com.openclassrooms.safetyNet.DataSource;
 import com.openclassrooms.safetyNet.model.MedicalRecord;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class MedicalRecordIntegrationTest {
 
     @Autowired
@@ -30,12 +29,8 @@ class MedicalRecordIntegrationTest {
     @Autowired
     DataSource dataSource;
 
-    @BeforeEach
-    void setUp() {
-        dataSource.initDataSourceBeforeTest();
-    }
-
     @Test
+    @Order(1)
     void getMedicalRecordsTest() throws Exception {
         mockMvc.perform(get("/medicalRecord"))
                 .andExpect(status().isOk())
@@ -43,6 +38,7 @@ class MedicalRecordIntegrationTest {
     }
 
     @Test
+    @Order(2)
     void addMedicalRecordTest() throws Exception {
         mockMvc.perform(post("/medicalRecord").contentType(MediaType.APPLICATION_JSON)
                         .content("{\n" +
@@ -60,6 +56,7 @@ class MedicalRecordIntegrationTest {
     }
 
     @Test
+    @Order(3)
     void updateMedicalRecordTest() throws Exception {
         mockMvc.perform(put("/medicalRecord").contentType(MediaType.APPLICATION_JSON)
                         .content("{\n" +
@@ -80,8 +77,9 @@ class MedicalRecordIntegrationTest {
     }
 
     @Test
+    @Order(4)
     void deleteMedicalRecordTest() throws Exception {
-        mockMvc.perform(delete("/medicalRecord/John_Boyd")).andExpect(status().isNoContent());
+        mockMvc.perform(delete("/medicalRecord/John_Boyd")).andExpect(status().isOk());
         List<MedicalRecord> john = dataSource.getMedicalrecords().stream()
                 .filter(medicalRecord -> medicalRecord.getFirstName().equals("John") && medicalRecord.getLastName().equals("Boyd"))
                 .collect(Collectors.toList());

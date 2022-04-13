@@ -35,7 +35,7 @@ public class MedicalRecordDAOTest {
         medicalRecords.add(new MedicalRecord());
         when(dataSource.getMedicalrecords()).thenReturn(medicalRecords);
 
-        assertEquals(1, medicalRecordDAO.findAll().size());
+        assertEquals(medicalRecords, medicalRecordDAO.findAll());
         verify(dataSource, Mockito.times(1)).getMedicalrecords();
     }
 

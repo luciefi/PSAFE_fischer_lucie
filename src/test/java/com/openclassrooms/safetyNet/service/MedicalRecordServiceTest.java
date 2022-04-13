@@ -5,6 +5,7 @@ import com.openclassrooms.safetyNet.exceptions.InvalidFormattedFullNameException
 import com.openclassrooms.safetyNet.exceptions.MedicalRecordAlreadyExistsException;
 import com.openclassrooms.safetyNet.exceptions.MedicalRecordNotFoundException;
 import com.openclassrooms.safetyNet.model.MedicalRecord;
+import com.openclassrooms.safetyNet.model.Person;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,7 +15,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -94,9 +97,25 @@ public class MedicalRecordServiceTest {
 
     @Test
     public void updateKnownMedicalRecordTest() {
-        when(medicalRecordDAO.findByFirstAndLastNames(anyString(), anyString())).thenReturn(new MedicalRecord());
-        assertEquals(new MedicalRecord(), medicalRecordService.update(new MedicalRecord()));
+        MedicalRecord medicalRecord = new MedicalRecord();
+        medicalRecord.setFirstName("toto");
+        medicalRecord.setLastName("test");
+
+        MedicalRecord updatedMedicalRecord = new MedicalRecord();
+        updatedMedicalRecord.setFirstName("toto");
+        updatedMedicalRecord.setLastName("test");
+        updatedMedicalRecord.setBirthdate(new Date());
+        updatedMedicalRecord.setMedications(new ArrayList<>());
+        updatedMedicalRecord.setAllergies(new ArrayList<>());
+        when(medicalRecordDAO.findByFirstAndLastNames(anyString(), anyString())).thenReturn(medicalRecord);
+
+        assertEquals(medicalRecord, medicalRecordService.update(updatedMedicalRecord));
         verify(medicalRecordDAO, Mockito.times(1)).findByFirstAndLastNames(anyString(), anyString());
+        assertThat(medicalRecord.getFirstName()).isEqualTo("toto");
+        assertThat(medicalRecord.getLastName()).isEqualTo("test");
+        assertNotNull(medicalRecord.getBirthdate());
+        assertNotNull(medicalRecord.getMedications());
+        assertNotNull(medicalRecord.getAllergies());
     }
 
     @Test

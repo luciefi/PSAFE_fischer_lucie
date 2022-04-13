@@ -35,7 +35,7 @@ public class PersonDAOTest {
         persons.add(new Person());
         when(dataSource.getPersons()).thenReturn(persons);
 
-        assertEquals(1, personDAO.findAll().size());
+        assertEquals(persons, personDAO.findAll());
         verify(dataSource, Mockito.times(1)).getPersons();
     }
 

@@ -35,7 +35,7 @@ public class FireStationDAOTest {
         List<FireStation> fireStations = new ArrayList<>();
         fireStations.add(new FireStation());
         when(dataSource.getFirestations()).thenReturn(fireStations);
-        assertEquals(1, fireStationDAO.findAll().size());
+        assertEquals(fireStations, fireStationDAO.findAll());
         verify(dataSource, Mockito.times(1)).getFirestations();
     }
 
@@ -105,8 +105,10 @@ public class FireStationDAOTest {
         fireStations.add(new FireStation("address 2", 2));
         fireStations.add(new FireStation("address 3", 2));
         when(dataSource.getFirestations()).thenReturn(fireStations);
+
         // Act
         Optional<Integer> station = fireStationDAO.findByAddressAndMapToStation("address 2");
+
         // Assert
         verify(dataSource, Mockito.times(1)).getFirestations();
         assertTrue(station.isPresent());

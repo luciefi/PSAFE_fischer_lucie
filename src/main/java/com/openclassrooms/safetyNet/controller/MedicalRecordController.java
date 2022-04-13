@@ -42,6 +42,6 @@ public class MedicalRecordController {
     @DeleteMapping("/medicalRecord/{fullName}")
     public ResponseEntity<?> deleteMedicalRecord(@PathVariable("fullName") final String fullName) {
         medicalRecordService.delete(fullName);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 }

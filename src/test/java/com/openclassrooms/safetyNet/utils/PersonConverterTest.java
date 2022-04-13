@@ -1,5 +1,9 @@
 package com.openclassrooms.safetyNet.utils;
 
+import com.openclassrooms.safetyNet.dto.ChildDTO;
+import com.openclassrooms.safetyNet.dto.LightweightPersonDTO;
+import com.openclassrooms.safetyNet.dto.PersonInfoDTO;
+import com.openclassrooms.safetyNet.dto.PersonWithMedicalRecordDTO;
 import com.openclassrooms.safetyNet.model.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,7 +23,7 @@ public class PersonConverterTest {
                 "@test.com");
 
         // Act
-        LightweightPerson lightweightPerson = PersonConverter.convertToLightweight(person);
+        LightweightPersonDTO lightweightPerson = PersonConverter.convertToLightweight(person);
 
         // Assert
         assertThat(lightweightPerson.getFirstName()).isEqualTo("toto");
@@ -48,7 +52,7 @@ public class PersonConverterTest {
         householdList.add(person2);
 
         // Act
-        Child child = PersonConverter.convertToChild(person, age, householdList);
+        ChildDTO child = PersonConverter.convertToChild(person, age, householdList);
 
         // Assert
         assertThat(child.getFirstName()).isEqualTo("toto");
@@ -75,7 +79,7 @@ public class PersonConverterTest {
                 new ArrayList<>());
 
         // Act
-        PersonWithMedicalRecord personWithMedicalRecord =
+        PersonWithMedicalRecordDTO personWithMedicalRecord =
                 PersonConverter.convertToPersonWithMedicalRecord(person, medicalRecord);
 
         // Assert
@@ -153,7 +157,7 @@ public class PersonConverterTest {
                 new ArrayList<>());
 
         // Act
-        PersonInfo personInfo =
+        PersonInfoDTO personInfo =
                 PersonConverter.convertToPersonInfo(person, medicalRecord);
 
         // Assert

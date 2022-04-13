@@ -2,10 +2,7 @@ package com.openclassrooms.safetyNet.IntegrationTest;
 
 import com.openclassrooms.safetyNet.DataSource;
 import com.openclassrooms.safetyNet.model.FireStation;
-import com.openclassrooms.safetyNet.model.Person;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class FireStationIntegrationTest {
 
     @Autowired
@@ -31,54 +29,34 @@ class FireStationIntegrationTest {
     @Autowired
     DataSource dataSource;
 
-    @BeforeEach
-    void setUp() {
-        dataSource.initDataSourceBeforeTest();
-    }
-
     @Test
+    @Order(1)
     void getFireStationMappingTest() throws Exception {
-        mockMvc.perform(get("/firestations"))
-                .andExpect(status().isOk())
-                .andExpect((jsonPath("$[0].address", is("1509 Culver St"))));
+        mockMvc.perform(get("/firestations")).andExpect(status().isOk()).andExpect((jsonPath("$[0].address", is("1509 Culver St"))));
     }
 
     @Test
+    @Order(2)
     void addFireStationMappingTest() throws Exception {
-        mockMvc.perform(post("/firestations").contentType(MediaType.APPLICATION_JSON)
-                        .content("{\n" +
-                                "    \"address\": \"1 Culver St\",\n" +
-                                "    \"station\": \"1\"\n" +
-                                "}"))
-                .andExpect(status().isCreated())
-                .andExpect((jsonPath("$.address", is("1 Culver St"))));
+        mockMvc.perform(post("/firestations").contentType(MediaType.APPLICATION_JSON).content("{\n" + "    \"address\": \"1 Culver St\",\n" + "    \"station\": \"1\"\n" + "}")).andExpect(status().isCreated()).andExpect((jsonPath("$.address", is("1 Culver St"))));
 
-        Assertions.assertEquals(1, (int) dataSource.getFirestations().stream()
-                .filter(fireStation -> fireStation.getAddress().equals("1 Culver St")).count());
+        Assertions.assertEquals(1, (int) dataSource.getFirestations().stream().filter(fireStation -> fireStation.getAddress().equals("1 Culver St")).count());
     }
 
     @Test
+    @Order(3)
     void updateFireStationMappingTest() throws Exception {
-        mockMvc.perform(put("/firestations").contentType(MediaType.APPLICATION_JSON)
-                        .content("{\n" +
-                                "    \"address\": \"1509 Culver St\",\n" +
-                                "    \"station\": \"17\"\n" +
-                                "}"))
-                .andExpect(status().isOk())
-                .andExpect((jsonPath("$.station", is(17))));
-        FireStation culverUpdated = dataSource.getFirestations().stream()
-                .filter(fireStation -> fireStation.getAddress().equals("1509 Culver St"))
-                .collect(Collectors.toList()).get(0);
+        mockMvc.perform(put("/firestations").contentType(MediaType.APPLICATION_JSON).content("{\n" + "    \"address\": \"1509 Culver St\",\n" + "    \"station\": \"17\"\n" + "}")).andExpect(status().isOk()).andExpect((jsonPath("$.station", is(17))));
+        FireStation culverUpdated = dataSource.getFirestations().stream().filter(fireStation -> fireStation.getAddress().equals("1509 Culver St")).collect(Collectors.toList()).get(0);
         Assertions.assertEquals("1509 Culver St", culverUpdated.getAddress());
         Assertions.assertEquals(17, culverUpdated.getStation());
     }
 
     @Test
+    @Order(4)
     void deleteFireStationMappingTest() throws Exception {
-        mockMvc.perform(delete("/firestations/1509 Culver St")).andExpect(status().isNoContent());
-        List<FireStation> culver = dataSource.getFirestations().stream()
-                .filter(fireStation -> fireStation.getAddress().equals("1509 Culver St"))
-                .collect(Collectors.toList());
+        mockMvc.perform(delete("/firestations/1509 Culver St")).andExpect(status().isOk());
+        List<FireStation> culver = dataSource.getFirestations().stream().filter(fireStation -> fireStation.getAddress().equals("1509 Culver St")).collect(Collectors.toList());
         assertThat(culver).isEmpty();
     }
 }

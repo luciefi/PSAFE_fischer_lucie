@@ -1,5 +1,6 @@
 package com.openclassrooms.safetyNet.service;
 
+import com.openclassrooms.safetyNet.dto.*;
 import com.openclassrooms.safetyNet.dao.IFireStationDAO;
 import com.openclassrooms.safetyNet.dao.IMedicalRecordDAO;
 import com.openclassrooms.safetyNet.dao.IPersonDAO;
@@ -71,7 +72,7 @@ public class BusinessServiceTest {
         when(medicalRecordDAO.findByFirstAndLastNames(anyString(), anyString())).thenReturn(childMedicalRecord).thenReturn(adultMedicalRecord);
 
         // Act
-        PersonListingForFireStation personListingForFireStation = businessService.getPersonListingForFireStation(1);
+        PersonListingForFireStationDTO personListingForFireStation = businessService.getPersonListingForFireStation(1);
 
         // Assert
         verify(fireStationDAO, Mockito.times(1)).getAddressesForStation(anyInt());
@@ -110,7 +111,7 @@ public class BusinessServiceTest {
         when(medicalRecordService.findByFirstAndLastNamesOrThrow(anyString(), anyString())).thenReturn(childMedicalRecord).thenReturn(adultMedicalRecord);
 
         // Act
-        List<Child> children = businessService.getChildren("address 1");
+        List<ChildDTO> children = businessService.getChildren("address 1");
 
         // Assert
         verify(personDAO, Mockito.times(1)).findByAddress(anyString());
@@ -157,7 +158,7 @@ public class BusinessServiceTest {
         when(medicalRecordService.findByFirstAndLastNamesOrThrow(anyString(), anyString())).thenReturn(medicalRecord);
 
         // Act
-        PersonListingForAddress personListingForAddress = businessService.getPersonListingForAddress("my address");
+        PersonListingForAddressDTO personListingForAddress = businessService.getPersonListingForAddress("my address");
 
         // Assert
         verify(fireStationDAO, Mockito.times(1)).findByAddressAndMapToStation(anyString());
@@ -213,7 +214,7 @@ public class BusinessServiceTest {
         when(medicalRecordService.findByFirstAndLastNamesOrThrow(anyString(), anyString())).thenReturn(medicalRecord);
 
         // Act
-        PersonInfo personInfo = businessService.getPersonInfo("", "");
+        PersonInfoDTO personInfo = businessService.getPersonInfo("", "");
 
         // Assert
         assertNotNull(personInfo);
@@ -246,7 +247,7 @@ public class BusinessServiceTest {
         stations.add(2);
 
         // Act
-        List<StationWithAddressAndPersonList> resultList =
+        List<StationWithAddressListingDTO> resultList =
                 businessService.getPersonsForListOfStations(stations);
 
         // Assert

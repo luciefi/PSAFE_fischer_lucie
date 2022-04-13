@@ -44,6 +44,7 @@ public class PersonService implements IPersonService {
 
     @Override
     public Person findByName(String fullName) {
+        logger.debug("Looking for person with name {}", fullName);
         String[] nameArray = PersonConverter.convertToNameArray(fullName);
         return personDAO.findByFirstAndLastNames(nameArray[0], nameArray[1]);
     }
@@ -78,5 +79,4 @@ public class PersonService implements IPersonService {
         String[] nameArray = PersonConverter.convertToNameArray(fullName);
         personDAO.deleteByFirstAndLastNames(nameArray[0], nameArray[1]);
     }
-
 }

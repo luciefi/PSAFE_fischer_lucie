@@ -12,6 +12,7 @@ import org.mockito.Mock;
 
 import java.util.Collections;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -77,9 +78,28 @@ public class PersonServiceTest {
 
     @Test
     public void updateKnownPersonTest() {
-        when(personDAO.findByFirstAndLastNames(anyString(), anyString())).thenReturn(new Person());
-        assertEquals(new Person(), personService.update(new Person()));
+        Person person = new Person();
+        person.setFirstName("toto");
+        person.setLastName("test");
+
+        Person updatedPerson = new Person();
+        updatedPerson.setFirstName("toto");
+        updatedPerson.setLastName("test");
+        updatedPerson.setAddress("new address");
+        updatedPerson.setAddress("new address");
+        updatedPerson.setPhone("new-email@test.com");
+        updatedPerson.setCity("new city");
+        updatedPerson.setZip(123);
+        when(personDAO.findByFirstAndLastNames(anyString(), anyString())).thenReturn(person);
+
+        assertEquals(person, personService.update(updatedPerson));
         verify(personDAO, Mockito.times(1)).findByFirstAndLastNames(anyString(), anyString());
+        assertThat(person.getFirstName()).isEqualTo("toto");
+        assertThat(person.getLastName()).isEqualTo("test");
+        assertThat(person.getAddress()).isEqualTo("new address");
+        assertThat(person.getPhone()).isEqualTo("new-email@test.com");
+        assertThat(person.getCity()).isEqualTo("new city");
+        assertThat(person.getZip()).isEqualTo(123);
     }
 
     @Test

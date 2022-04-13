@@ -50,7 +50,6 @@ class PersonControllerTest {
     @Test
     void addPersonTest() throws Exception {
         when(personService.save(any(Person.class))).thenReturn(new Person());
-
         mockMvc.perform(post("/persons/").contentType(MediaType.APPLICATION_JSON)
                         .content("{\n" +
                                 "    \"firstName\": \"Jane\",\n" +
@@ -96,6 +95,7 @@ class PersonControllerTest {
                                 "    \"email\": \"\"\n" +
                                 "}"))
                 .andExpect(status().isBadRequest());
+        verify(personService, Mockito.times(0)).save(any(Person.class));
     }
 
     @Test
@@ -117,7 +117,7 @@ class PersonControllerTest {
 
     @Test
     void updateUnknownPersonTest() throws Exception {
-        when(personService.update(any(Person.class))).thenThrow(new PersonAlreadyExistsException());
+        when(personService.update(any(Person.class))).thenThrow(new PersonNotFoundException());
         mockMvc.perform(put("/persons").contentType(MediaType.APPLICATION_JSON)
                         .content("{\n" +
                                 "    \"firstName\": \"Jane\",\n" +
@@ -128,7 +128,7 @@ class PersonControllerTest {
                                 "    \"phone\": \"841-874-6512\",\n" +
                                 "    \"email\": \"jaboydupdated@email.com\"\n" +
                                 "}"))
-                .andExpect(status().isConflict());
+                .andExpect(status().isNotFound());
         verify(personService, Mockito.times(1)).update(any(Person.class));
     }
 
@@ -146,11 +146,12 @@ class PersonControllerTest {
                                 "    \"email\": \"\"\n" +
                                 "}"))
                 .andExpect(status().isBadRequest());
+        verify(personService, Mockito.times(0)).update(any(Person.class));
     }
 
     @Test
     void deletePersonTest() throws Exception {
-        mockMvc.perform(delete("/persons/John_Boyd")).andExpect(status().isNoContent());
+        mockMvc.perform(delete("/persons/John_Boyd")).andExpect(status().isOk());
         verify(personService, Mockito.times(1)).delete(anyString());
     }
 
@@ -164,14 +165,7 @@ class PersonControllerTest {
     @Test
     void deleteInvalidNameTest() throws Exception {
         Mockito.doThrow(new InvalidFormattedFullNameException()).when(personService).delete(anyString());
-        mockMvc.perform(delete("/persons/Jane_Boyd")).andExpect(status().isBadRequest());
-        verify(personService, Mockito.times(1)).delete(anyString());
-    }
-
-    @Test
-    void deleteInternalErrorTest() throws Exception {
-        Mockito.doThrow(new InternalError()).when(personService).delete(anyString());
-        mockMvc.perform(delete("/persons/Jane_Boyd")).andExpect(status().isInternalServerError());
+        mockMvc.perform(delete("/persons/JaneBoyd")).andExpect(status().isBadRequest());
         verify(personService, Mockito.times(1)).delete(anyString());
     }
 }

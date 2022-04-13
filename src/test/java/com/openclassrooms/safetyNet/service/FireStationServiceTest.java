@@ -75,10 +75,15 @@ public class FireStationServiceTest {
     @Test
     public void updateKnownFireStationMappingTest() {
         FireStation fireStation = new FireStation();
-        fireStation.setStation(1);
+        fireStation.setStation(3);
         fireStation.setAddress("1 Culver St");
-        when(fireStationDAO.findByAddress(anyString())).thenReturn(new FireStation());
-        assertEquals(fireStation, fireStationService.update(fireStation));
+
+        FireStation updatedFireStation = new FireStation();
+        updatedFireStation.setStation(1);
+        updatedFireStation.setAddress("1 Culver St");
+        when(fireStationDAO.findByAddress(anyString())).thenReturn(fireStation);
+
+        assertEquals(fireStation, fireStationService.update(updatedFireStation));
         verify(fireStationDAO, Mockito.times(1)).findByAddress(anyString());
     }
 
@@ -88,7 +93,6 @@ public class FireStationServiceTest {
         FireStation fireStation = new FireStation();
         fireStation.setStation(1);
         fireStation.setAddress("1 Culver St");
-
         assertThrows(FireStationNotFoundException.class, () -> fireStationService.update(fireStation));
         verify(fireStationDAO, Mockito.times(1)).findByAddress(anyString());
     }

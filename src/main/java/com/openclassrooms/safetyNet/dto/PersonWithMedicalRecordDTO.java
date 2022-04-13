@@ -1,4 +1,4 @@
-package com.openclassrooms.safetyNet.model;
+package com.openclassrooms.safetyNet.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class PersonWithMedicalRecord {
+public class PersonWithMedicalRecordDTO {
 
     private String firstName;
 
